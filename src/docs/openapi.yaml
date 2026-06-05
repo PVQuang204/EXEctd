@@ -1,0 +1,1323 @@
+openapi: 3.0.0
+info:
+  title: Mobile Restaurant Management API
+  version: 1.1.0
+  description: |
+    REST API cho hệ thống đặt món — JWT, Socket.IO, tìm nhà hàng theo GPS, VNPay, Cloudinary.
+
+    **Base path:** `/api` — Swagger UI: `/api-docs`
+
+    **Roles:** `customer`, `restaurant_owner`, `delivery_staff`, `admin`
+    - Đăng ký API chỉ cho `customer`, `restaurant_owner`, `delivery_staff`
+    - Tài khoản `admin` cần tạo trong MongoDB (hoặc đổi role user có sẵn)
+
+    **Luồng test gợi ý:**
+    1. Owner đăng ký → tạo nhà hàng (status `pending`)
+    2. Admin duyệt nhà hàng (`PATCH .../approve`)
+    3. Owner tạo menu → Customer đặt đơn → thanh toán COD/VNPay
+    4. Owner cập nhật trạng thái đơn theo flow: pending → confirmed → preparing → ready → delivering → completed
+
+    **Socket.IO** (kết nối kèm `auth.token` = access JWT):
+    `order_created`, `order_confirmed`, `order_preparing`, `order_ready`, `order_delivering`, `order_completed`, `order_cancelled`, `new_review`, `notification`
+
+servers:
+  - url: http://localhost:5000
+    description: Local development
+
+tags:
+  - name: System
+  - name: Auth
+  - name: Users
+  - name: Restaurants
+  - name: Menu
+  - name: Orders
+  - name: Payments
+  - name: Reviews
+  - name: Notifications
+  - name: Dashboard
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+
+    AuthTokens:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+          enum: [customer, restaurant_owner, delivery_staff, admin]
+        avatar:
+          type: string
+          nullable: true
+        status:
+          type: string
+
+    RegisterInput:
+      type: object
+      required: [fullName, email, password]
+      properties:
+        fullName:
+          type: string
+          minLength: 2
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        phone:
+          type: string
+        role:
+          type: string
+          enum: [customer, restaurant_owner, delivery_staff]
+          default: customer
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    RefreshInput:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+
+    ChangePasswordInput:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+          minLength: 6
+
+    ForgotPasswordInput:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    ResetPasswordInput:
+      type: object
+      required: [token, password]
+      properties:
+        token:
+          type: string
+        password:
+          type: string
+          minLength: 6
+
+    OrderCreateInput:
+      type: object
+      required: [restaurantId, items, deliveryAddress]
+      properties:
+        restaurantId:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            required: [foodId, quantity]
+            properties:
+              foodId:
+                type: string
+              quantity:
+                type: integer
+                minimum: 1
+        deliveryAddress:
+          type: string
+        deliveryLocation:
+          type: object
+          properties:
+            type:
+              type: string
+              example: Point
+            coordinates:
+              type: array
+              items:
+                type: number
+              example: [106.660172, 10.762622]
+        note:
+          type: string
+        promotionCode:
+          type: string
+
+    OrderStatusInput:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [pending, confirmed, preparing, ready, delivering, completed, cancelled]
+        note:
+          type: string
+
+    AssignDriverInput:
+      type: object
+      required: [driverId]
+      properties:
+        driverId:
+          type: string
+
+    PaymentCreateInput:
+      type: object
+      required: [paymentMethod]
+      properties:
+        paymentMethod:
+          type: string
+          enum: [cod, vnpay]
+
+    ReviewCreateInput:
+      type: object
+      required: [restaurantId, rating]
+      properties:
+        restaurantId:
+          type: string
+        orderId:
+          type: string
+        foodId:
+          type: string
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+
+    Restaurant:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        ownerId:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        averageRating:
+          type: number
+
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+        customerId:
+          type: string
+        restaurantId:
+          type: string
+        status:
+          type: string
+          enum: [pending, confirmed, preparing, ready, delivering, completed, cancelled]
+        paymentStatus:
+          type: string
+          enum: [unpaid, paid, refunded]
+        totalAmount:
+          type: number
+        items:
+          type: array
+          items:
+            type: object
+
+    AdminDashboardData:
+      type: object
+      properties:
+        stats:
+          type: object
+          properties:
+            totalUsers:
+              type: integer
+            totalRestaurants:
+              type: integer
+            totalOrders:
+              type: integer
+            monthlyRevenue:
+              type: number
+        charts:
+          type: object
+          properties:
+            ordersByMonth:
+              type: array
+            revenueByMonth:
+              type: array
+            topFoods:
+              type: array
+            topRestaurants:
+              type: array
+
+paths:
+  /api/health:
+    get:
+      tags: [System]
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: API is running
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                      timestamp:
+                        type: string
+                        format: date-time
+
+  /api/auth/register:
+    post:
+      tags: [Auth]
+      summary: Đăng ký tài khoản
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterInput'
+      responses:
+        '201':
+          description: Đăng ký thành công
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AuthTokens'
+        '400':
+          description: Email đã tồn tại / validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Đăng nhập
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AuthTokens'
+        '401':
+          description: Sai email hoặc mật khẩu
+
+  /api/auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Làm mới access token
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AuthTokens'
+
+  /api/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Đăng xuất
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+
+  /api/auth/me:
+    get:
+      tags: [Auth]
+      summary: Thông tin user hiện tại
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+
+  /api/auth/change-password:
+    put:
+      tags: [Auth]
+      summary: Đổi mật khẩu
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordInput'
+      responses:
+        '200':
+          description: OK — trả về token mới
+
+  /api/auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Quên mật khẩu (gửi email reset)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordInput'
+      responses:
+        '200':
+          description: Email đã gửi (dev có thể in link ra console)
+
+  /api/auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Đặt lại mật khẩu bằng token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordInput'
+      responses:
+        '200':
+          description: OK
+
+  /api/users/profile:
+    get:
+      tags: [Users]
+      summary: Xem profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+    put:
+      tags: [Users]
+      summary: Cập nhật profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/users/avatar:
+    post:
+      tags: [Users]
+      summary: Upload avatar
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [avatar]
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+
+  /api/users:
+    get:
+      tags: [Users]
+      summary: Danh sách user (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Không phải admin
+
+  /api/users/{id}/lock:
+    patch:
+      tags: [Users]
+      summary: Khóa user (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/users/{id}/unlock:
+    patch:
+      tags: [Users]
+      summary: Mở khóa user (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/restaurants/nearby:
+    get:
+      tags: [Restaurants]
+      summary: Nhà hàng gần vị trí (Geo)
+      security: []
+      parameters:
+        - in: query
+          name: lat
+          required: true
+          schema:
+            type: number
+          example: 10.762622
+        - in: query
+          name: lng
+          required: true
+          schema:
+            type: number
+          example: 106.660172
+        - in: query
+          name: distance
+          schema:
+            type: number
+            default: 5
+          description: Bán kính (km)
+      responses:
+        '200':
+          description: OK
+
+  /api/restaurants/{id}:
+    get:
+      tags: [Restaurants]
+      summary: Chi tiết nhà hàng
+      security: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    put:
+      tags: [Restaurants]
+      summary: Cập nhật nhà hàng (owner/admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+                coverImage:
+                  type: string
+                  format: binary
+                logo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+
+  /api/restaurants:
+    post:
+      tags: [Restaurants]
+      summary: Tạo nhà hàng (restaurant_owner)
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+                coverImage:
+                  type: string
+                  format: binary
+                logo:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Created (status pending)
+
+  /api/restaurants/owner/mine:
+    get:
+      tags: [Restaurants]
+      summary: Nhà hàng của tôi (owner)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+
+  /api/restaurants/{id}/location:
+    patch:
+      tags: [Restaurants]
+      summary: Cập nhật GPS nhà hàng
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [latitude, longitude]
+              properties:
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+      responses:
+        '200':
+          description: OK
+
+  /api/restaurants/{id}/approve:
+    patch:
+      tags: [Restaurants]
+      summary: Duyệt nhà hàng (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/restaurants/{id}/reject:
+    patch:
+      tags: [Restaurants]
+      summary: Từ chối nhà hàng (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/menu/{restaurantId}/categories:
+    get:
+      tags: [Menu]
+      summary: Danh sách danh mục
+      security: []
+      parameters:
+        - in: path
+          name: restaurantId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    post:
+      tags: [Menu]
+      summary: Tạo danh mục (owner)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: restaurantId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                sortOrder:
+                  type: integer
+      responses:
+        '201':
+          description: OK
+
+  /api/menu/{restaurantId}/foods:
+    get:
+      tags: [Menu]
+      summary: Danh sách món
+      security: []
+      parameters:
+        - in: path
+          name: restaurantId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: categoryId
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/menu/foods:
+    post:
+      tags: [Menu]
+      summary: Tạo món (owner, multipart)
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [restaurantId, categoryId, name, price]
+              properties:
+                restaurantId:
+                  type: string
+                categoryId:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                stock:
+                  type: integer
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: OK
+
+  /api/menu/foods/{id}:
+    put:
+      tags: [Menu]
+      summary: Cập nhật món (owner)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: number
+                stock:
+                  type: integer
+                isAvailable:
+                  type: boolean
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+
+  /api/menu/{restaurantId}/combos:
+    get:
+      tags: [Menu]
+      summary: Danh sách combo
+      security: []
+      parameters:
+        - in: path
+          name: restaurantId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/menu/combos:
+    post:
+      tags: [Menu]
+      summary: Tạo combo (owner)
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [restaurantId, name, price, items]
+              properties:
+                restaurantId:
+                  type: string
+                name:
+                  type: string
+                price:
+                  type: number
+                items:
+                  type: string
+                  description: JSON array [{ foodId, quantity }]
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: OK
+
+  /api/menu/{restaurantId}/promotions:
+    get:
+      tags: [Menu]
+      summary: Khuyến mãi đang active
+      security: []
+      parameters:
+        - in: path
+          name: restaurantId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/menu/promotions:
+    post:
+      tags: [Menu]
+      summary: Tạo khuyến mãi (owner)
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [restaurantId, title, discountType, discountValue, startDate, endDate]
+              properties:
+                restaurantId:
+                  type: string
+                title:
+                  type: string
+                description:
+                  type: string
+                discountType:
+                  type: string
+                  enum: [percent, fixed]
+                discountValue:
+                  type: number
+                minOrderAmount:
+                  type: number
+                code:
+                  type: string
+                startDate:
+                  type: string
+                  format: date-time
+                endDate:
+                  type: string
+                  format: date-time
+      responses:
+        '201':
+          description: OK
+
+  /api/orders:
+    post:
+      tags: [Orders]
+      summary: Tạo đơn hàng (customer)
+      description: >-
+        Nhà hàng phải có status approved. Món phải isAvailable và đủ stock.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreateInput'
+      responses:
+        '201':
+          description: Đơn tạo thành công
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Order'
+        '400':
+          description: Nhà hàng chưa duyệt / món hết hàng / mã KM không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/orders/my:
+    get:
+      tags: [Orders]
+      summary: Đơn của tôi (customer)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+
+  /api/orders/restaurant:
+    get:
+      tags: [Orders]
+      summary: Đơn theo nhà hàng (owner)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+
+  /api/orders/delivery:
+    get:
+      tags: [Orders]
+      summary: Đơn giao hàng (delivery_staff)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+
+  /api/orders/{id}/status:
+    patch:
+      tags: [Orders]
+      summary: Cập nhật trạng thái đơn
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderStatusInput'
+      responses:
+        '200':
+          description: OK
+
+  /api/orders/{id}/assign-driver:
+    patch:
+      tags: [Orders]
+      summary: Gán tài xế
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignDriverInput'
+      responses:
+        '200':
+          description: OK
+
+  /api/orders/stats/revenue:
+    get:
+      tags: [Orders]
+      summary: Thống kê doanh thu (owner)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: restaurantId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+
+  /api/orders/stats/top-foods/{restaurantId}:
+    get:
+      tags: [Orders]
+      summary: Món bán chạy
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: restaurantId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/payments/{orderId}:
+    post:
+      tags: [Payments]
+      summary: Tạo thanh toán COD hoặc VNPay
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreateInput'
+      responses:
+        '200':
+          description: OK — VNPay trả thêm paymentUrl
+
+  /api/payments/{orderId}/cod-confirm:
+    patch:
+      tags: [Payments]
+      summary: Xác nhận đã thu COD (owner)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/payments/vnpay/callback:
+    get:
+      tags: [Payments]
+      summary: VNPay return URL (redirect browser)
+      security: []
+      parameters:
+        - in: query
+          name: vnp_TxnRef
+          schema:
+            type: string
+        - in: query
+          name: vnp_ResponseCode
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirect về CLIENT_URL
+
+  /api/payments/vnpay/ipn:
+    get:
+      tags: [Payments]
+      summary: VNPay IPN webhook
+      security: []
+      responses:
+        '200':
+          description: VNPay acknowledgment
+
+  /api/reviews/{restaurantId}:
+    get:
+      tags: [Reviews]
+      summary: Đánh giá theo nhà hàng
+      security: []
+      parameters:
+        - in: path
+          name: restaurantId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+
+  /api/reviews:
+    post:
+      tags: [Reviews]
+      summary: Tạo đánh giá (customer, multipart)
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [restaurantId, rating]
+              properties:
+                restaurantId:
+                  type: string
+                orderId:
+                  type: string
+                foodId:
+                  type: string
+                rating:
+                  type: integer
+                comment:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: OK
+
+  /api/notifications:
+    get:
+      tags: [Notifications]
+      summary: Danh sách thông báo
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: OK
+
+  /api/notifications/{id}/read:
+    patch:
+      tags: [Notifications]
+      summary: Đánh dấu đã đọc
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/notifications/read-all:
+    patch:
+      tags: [Notifications]
+      summary: Đánh dấu tất cả đã đọc
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+
+  /api/dashboard/admin:
+    get:
+      tags: [Dashboard]
+      summary: Dashboard tổng quan (admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Thống kê users, nhà hàng, đơn hàng, biểu đồ doanh thu
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AdminDashboardData'
+        '403':
+          description: Không phải admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
