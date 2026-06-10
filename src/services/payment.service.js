@@ -1,11 +1,11 @@
 const paymentRepository = require('../repositories/payment.repository');
 const orderRepository = require('../repositories/order.repository');
-const { createVNPayPaymentUrl, verifyVNPayCallback } = require('../config/vnpay');
+const { createMoMoPaymentUrl, verifyMoMoCallback } = require('../config/momo');
 const { createNotification } = require('./notification.service');
 const { emitOrderEvent } = require('../sockets');
 const ApiError = require('../utils/ApiError');
 
-const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => {
+const createPayment = async (orderId, customerId, { paymentMethod }) => {
   const order = await orderRepository.findById(orderId);
   if (!order) throw new ApiError(404, 'Order not found');
   if (order.customerId.toString() !== customerId.toString()) {
@@ -19,7 +19,7 @@ const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => 
       orderId,
       amount: order.totalAmount,
       paymentMethod,
-      paymentStatus: paymentMethod === 'cod' ? 'pending' : 'pending',
+      paymentStatus: 'pending',
     });
   }
 
@@ -28,30 +28,30 @@ const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => 
     return { payment, message: 'Pay on delivery' };
   }
 
-  if (paymentMethod === 'vnpay') {
-    const url = createVNPayPaymentUrl({
+  if (paymentMethod === 'momo') {
+    const paymentUrl = await createMoMoPaymentUrl({
       amount: order.totalAmount,
       orderId: payment._id.toString(),
       orderInfo: `Thanh toan don hang ${orderId}`,
-      ipAddr,
     });
-    return { payment, paymentUrl: url };
+    return { payment, paymentUrl };
   }
 
-  throw new ApiError(400, 'Invalid payment method');
+  throw new ApiError(400, 'Invalid payment method. Use "cod" or "momo"');
 };
 
-const handleVNPayCallback = async (query) => {
-  if (!verifyVNPayCallback({ ...query })) {
-    throw new ApiError(400, 'Invalid VNPay signature');
+const handleMoMoCallback = async (params) => {
+  if (!verifyMoMoCallback(params)) {
+    throw new ApiError(400, 'Invalid MoMo signature');
   }
-  const payment = await paymentRepository.findById(query.vnp_TxnRef);
+
+  const payment = await paymentRepository.findById(params.orderId);
   if (!payment) throw new ApiError(404, 'Payment not found');
 
-  const success = query.vnp_ResponseCode === '00';
+  const success = params.resultCode === 0 || params.resultCode === '0';
   payment.paymentStatus = success ? 'success' : 'failed';
-  payment.transactionId = query.vnp_TransactionNo;
-  payment.vnpayResponse = query;
+  payment.transactionId = String(params.transId);
+  payment.momoResponse = params;
   await payment.save();
 
   const order = await orderRepository.findById(payment.orderId);
@@ -61,7 +61,7 @@ const handleVNPayCallback = async (query) => {
     await createNotification({
       userId: order.customerId,
       title: 'Payment successful',
-      content: `Order #${order._id} paid via VNPay`,
+      content: `Order #${order._id} paid via MoMo`,
       type: 'payment',
     });
     emitOrderEvent(order, 'payment_success');
@@ -90,4 +90,4 @@ const confirmCOD = async (orderId, ownerId) => {
   return order;
 };
 
-module.exports = { createPayment, handleVNPayCallback, confirmCOD };
+module.exports = { createPayment, handleMoMoCallback, confirmCOD };

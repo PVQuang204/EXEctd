@@ -5,8 +5,8 @@ const roleMiddleware = require('../middleware/role.middleware');
 
 const router = express.Router();
 
-router.get('/vnpay/callback', paymentController.vnpayCallback);
-router.get('/vnpay/ipn', paymentController.vnpayIpn);
+router.get('/momo/callback', paymentController.momoCallback);
+router.post('/momo/ipn', paymentController.momoIpn);
 
 router.use(authMiddleware);
 router.post('/:orderId', roleMiddleware('customer'), paymentController.create);

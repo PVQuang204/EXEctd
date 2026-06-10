@@ -3,7 +3,7 @@ info:
   title: Mobile Restaurant Management API
   version: 1.1.0
   description: |
-    REST API cho hệ thống đặt món — JWT, Socket.IO, tìm nhà hàng theo GPS, VNPay, Cloudinary.
+    REST API cho hệ thống đặt món — JWT, Socket.IO, tìm nhà hàng theo GPS, MoMo, Cloudinary.
 
     **Base path:** `/api` — Swagger UI: `/api-docs`
 
@@ -14,7 +14,7 @@ info:
     **Luồng test gợi ý:**
     1. Owner đăng ký → tạo nhà hàng (status `pending`)
     2. Admin duyệt nhà hàng (`PATCH .../approve`)
-    3. Owner tạo menu → Customer đặt đơn → thanh toán COD/VNPay
+    3. Owner tạo menu → Customer đặt đơn → thanh toán COD/MoMo
     4. Owner cập nhật trạng thái đơn theo flow: pending → confirmed → preparing → ready → delivering → completed
 
     **Socket.IO** (kết nối kèm `auth.token` = access JWT):
@@ -212,7 +212,7 @@ components:
       properties:
         paymentMethod:
           type: string
-          enum: [cod, vnpay]
+          enum: [cod, momo]
 
     ReviewCreateInput:
       type: object
@@ -1133,7 +1133,7 @@ paths:
   /api/payments/{orderId}:
     post:
       tags: [Payments]
-      summary: Tạo thanh toán COD hoặc VNPay
+      summary: Tạo thanh toán COD hoặc MoMo
       security:
         - bearerAuth: []
       parameters:
@@ -1150,7 +1150,7 @@ paths:
               $ref: '#/components/schemas/PaymentCreateInput'
       responses:
         '200':
-          description: OK — VNPay trả thêm paymentUrl
+          description: OK — MoMo trả thêm paymentUrl
 
   /api/payments/{orderId}/cod-confirm:
     patch:
@@ -1168,32 +1168,32 @@ paths:
         '200':
           description: OK
 
-  /api/payments/vnpay/callback:
+  /api/payments/momo/callback:
     get:
       tags: [Payments]
-      summary: VNPay return URL (redirect browser)
+      summary: MoMo return URL (redirect browser)
       security: []
       parameters:
         - in: query
-          name: vnp_TxnRef
+          name: orderId
           schema:
             type: string
         - in: query
-          name: vnp_ResponseCode
+          name: resultCode
           schema:
-            type: string
+            type: integer
       responses:
         '302':
           description: Redirect về CLIENT_URL
 
-  /api/payments/vnpay/ipn:
-    get:
+  /api/payments/momo/ipn:
+    post:
       tags: [Payments]
-      summary: VNPay IPN webhook
+      summary: MoMo IPN webhook
       security: []
       responses:
         '200':
-          description: VNPay acknowledgment
+          description: MoMo acknowledgment
 
   /api/reviews/{restaurantId}:
     get:
