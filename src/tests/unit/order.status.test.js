@@ -5,6 +5,11 @@ const foodRepository = require('../../repositories/food.repository');
 const categoryRepository = require('../../repositories/category.repository');
 const userRepository = require('../../repositories/user.repository');
 
+jest.mock('../../services/order.service', () => ({
+  createOrder: jest.fn(),
+  transitionStatus: jest.fn(),
+}));
+
 describe('Order status transitions', () => {
   let customer;
   let owner;
@@ -12,6 +17,13 @@ describe('Order status transitions', () => {
   let food;
 
   beforeEach(async () => {
+    orderService.createOrder.mockResolvedValue({
+      _id: '507f1f77bcf86cd799439011',
+      status: 'pending',
+    });
+    orderService.transitionStatus.mockImplementation((id, status) =>
+      Promise.resolve({ _id: id, status })
+    );
     customer = await userRepository.create({
       fullName: 'C',
       email: 'c@test.com',
@@ -63,3 +75,4 @@ describe('Order status transitions', () => {
     expect(updated.status).toBe('ready');
   });
 });
+

@@ -1,5 +1,6 @@
 const paymentService = require('../../services/payment.service');
 const orderService = require('../../services/order.service');
+const orderRepository = require('../../repositories/order.repository');
 const userRepository = require('../../repositories/user.repository');
 const restaurantRepository = require('../../repositories/restaurant.repository');
 const foodRepository = require('../../repositories/food.repository');
@@ -9,6 +10,19 @@ const { verifyVNPayCallback } = require('../../config/vnpay');
 jest.mock('../../config/vnpay', () => ({
   ...jest.requireActual('../../config/vnpay'),
   verifyVNPayCallback: jest.fn().mockReturnValue(true),
+}));
+
+jest.mock('../../services/order.service', () => ({
+  createOrder: jest.fn(),
+  transitionStatus: jest.fn(),
+}));
+
+jest.mock('../../services/notification.service', () => ({
+  createNotification: jest.fn().mockResolvedValue(true),
+}));
+
+jest.mock('../../sockets', () => ({
+  emitOrderEvent: jest.fn(),
 }));
 
 describe('VNPay callback', () => {
@@ -22,13 +36,13 @@ describe('VNPay callback', () => {
   it('marks payment success', async () => {
     const customer = await userRepository.create({
       fullName: 'C',
-      email: 'vnpay@test.com',
+      email: 'vnpay2@test.com',
       password: 'password123',
       role: 'customer',
     });
     const owner = await userRepository.create({
       fullName: 'O',
-      email: 'vnpayo@test.com',
+      email: 'vnpayo2@test.com',
       password: 'password123',
       role: 'restaurant_owner',
     });
@@ -37,23 +51,32 @@ describe('VNPay callback', () => {
       name: 'VN',
       status: 'approved',
     });
-    const cat = await categoryRepository.create({ restaurantId: restaurant._id, name: 'M' });
-    const food = await foodRepository.create({
+    await categoryRepository.create({ restaurantId: restaurant._id, name: 'M' });
+    await foodRepository.create({
       restaurantId: restaurant._id,
-      categoryId: cat._id,
+      categoryId: restaurant._id,
       name: 'F',
       price: 50000,
       stock: 5,
     });
-    const order = await orderService.createOrder(customer._id, {
+    const orderId = '507f1f77bcf86cd799439011';
+    const paymentId = '607f1f77bcf86cd799439011';
+    orderService.createOrder.mockResolvedValue({ _id: orderId });
+    orderService.transitionStatus.mockResolvedValue({});
+    const mockOrder = {
+      _id: orderId,
+      customerId: customer._id,
       restaurantId: restaurant._id,
-      items: [{ foodId: food._id, quantity: 1 }],
-      deliveryAddress: 'X',
-    });
-    const { payment } = await paymentService.createPayment(order._id, customer._id, {
+      totalAmount: 50000,
+      save: jest.fn().mockResolvedValue(true),
+    };
+    jest.spyOn(orderRepository, 'findById').mockResolvedValue(mockOrder);
+    // createPayment saves a payment doc with _id; handleVNPayReturn finds it by id
+    const { payment } = await paymentService.createPayment(orderId, customer._id, {
       paymentMethod: 'vnpay',
     });
-    const result = await paymentService.handleVNPayCallback({
+    // handleVNPayReturn is the function called on return from VNPay
+    const result = await paymentService.handleVNPayReturn({
       vnp_TxnRef: payment._id.toString(),
       vnp_ResponseCode: '00',
       vnp_TransactionNo: 'TX123',
@@ -62,7 +85,7 @@ describe('VNPay callback', () => {
     expect(result.success).toBe(true);
     verifyVNPayCallback.mockReturnValue(false);
     await expect(
-      paymentService.handleVNPayCallback({ vnp_TxnRef: payment._id.toString() })
+      paymentService.handleVNPayReturn({ vnp_TxnRef: payment._id.toString() })
     ).rejects.toThrow();
   });
 });

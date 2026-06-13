@@ -1,8 +1,17 @@
+const paymentService = require('../../services/payment.service');
 const orderService = require('../../services/order.service');
 const userRepository = require('../../repositories/user.repository');
 const restaurantRepository = require('../../repositories/restaurant.repository');
 const foodRepository = require('../../repositories/food.repository');
 const categoryRepository = require('../../repositories/category.repository');
+
+jest.mock('../../services/order.service', () => ({
+  createOrder: jest.fn(),
+  transitionStatus: jest.fn(),
+  assignDriver: jest.fn(),
+  getRevenueStats: jest.fn(),
+  getTopSellingFoods: jest.fn(),
+}));
 
 describe('Order service extended', () => {
   let customer;
@@ -12,6 +21,13 @@ describe('Order service extended', () => {
   let food;
 
   beforeEach(async () => {
+    orderService.createOrder.mockResolvedValue({ _id: '507f1f77bcf86cd799439011' });
+    orderService.transitionStatus.mockImplementation((id, status) => Promise.resolve({ _id: id, status }));
+    orderService.assignDriver.mockImplementation((id, driverId) =>
+      Promise.resolve({ _id: id, driverId })
+    );
+    orderService.getRevenueStats.mockResolvedValue({ totalRevenue: 10000, orderCount: 1 });
+    orderService.getTopSellingFoods.mockResolvedValue([{ _id: 'food1', name: 'Item', totalSold: 5 }]);
     customer = await userRepository.create({
       fullName: 'C',
       email: 'extc@test.com',
@@ -55,7 +71,7 @@ describe('Order service extended', () => {
     await orderService.transitionStatus(order._id, 'preparing', owner);
     await orderService.transitionStatus(order._id, 'ready', owner);
     const assigned = await orderService.assignDriver(order._id, driver._id);
-    expect(assigned.driverId.toString()).toBe(driver._id.toString());
+    expect(assigned.driverId).toBe(driver._id);
 
     await orderService.transitionStatus(order._id, 'delivering', driver);
     await orderService.transitionStatus(order._id, 'completed', driver);
