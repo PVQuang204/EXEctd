@@ -9,10 +9,6 @@ const router = express.Router();
 router.get('/momo/callback', paymentController.momoCallback);
 router.post('/momo/ipn', paymentController.momoIpn);
 
-// VNPay callbacks (public — no auth)
-router.get('/vnpay/return', paymentController.vnpayReturn);
-router.get('/vnpay/ipn', paymentController.vnpayIpn);
-
 // Protected routes
 router.use(authMiddleware);
 router.post('/:orderId', roleMiddleware('customer'), paymentController.create);

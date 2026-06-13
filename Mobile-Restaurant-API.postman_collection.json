@@ -34,7 +34,7 @@
         "type": "text/javascript",
         "exec": [
           "const url = pm.request.url.toString();",
-          "const isPublic = url.includes('/health') || url.includes('/auth/register') || url.includes('/auth/login') || url.includes('/auth/refresh') || url.includes('/auth/forgot') || url.includes('/auth/reset') || url.includes('/restaurants/nearby') || url.includes('/payments/vnpay') || (url.includes('/reviews/') && pm.request.method === 'GET');",
+          "const isPublic = url.includes('/health') || url.includes('/auth/register') || url.includes('/auth/login') || url.includes('/auth/refresh') || url.includes('/auth/forgot') || url.includes('/auth/reset') || url.includes('/restaurants/nearby') || url.includes('/payments/momo') || (url.includes('/reviews/') && pm.request.method === 'GET');",
           "const isPublicGet = pm.request.method === 'GET' && (url.match(/\\/restaurants\\/[^/]+$/) && !url.includes('/owner/') || (url.includes('/menu/') && url.includes('/categories') || url.includes('/foods') || url.includes('/combos') || url.includes('/promotions')));",
           "if (isPublic || isPublicGet) {",
           "  return;",
@@ -966,12 +966,12 @@
           }
         },
         {
-          "name": "Create Payment — VNPay",
+          "name": "Create Payment — MoMo",
           "request": {
             "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] },
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"paymentMethod\": \"vnpay\"\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"paymentMethod\": \"momo\"\n}" },
             "url": "{{baseUrl}}/payments/{{orderId}}"
           },
           "event": [
@@ -980,7 +980,7 @@
               "script": {
                 "exec": [
                   "const r = pm.response.json();",
-                  "if (r.data?.paymentUrl) console.log('VNPay URL:', r.data.paymentUrl);"
+                  "if (r.data?.paymentUrl) console.log('MoMo URL:', r.data.paymentUrl);"
                 ]
               }
             }

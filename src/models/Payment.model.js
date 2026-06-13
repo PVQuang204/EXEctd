@@ -17,7 +17,6 @@ const paymentSchema = new mongoose.Schema(
     },
     transactionId: { type: String, default: null },
     momoResponse: { type: mongoose.Schema.Types.Mixed },
-    vnpayResponse: { type: mongoose.Schema.Types.Mixed },
   },
   { timestamps: true }
 );

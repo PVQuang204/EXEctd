@@ -44,7 +44,7 @@ npm run dev
 | `CLIENT_URL` | URL frontend (CORS), ví dụ `http://localhost:5173` |
 | `CLOUDINARY_*` | Upload ảnh production |
 | `SMTP_*` | Email forgot password |
-| `VNPAY_*` | Thanh toán VNPay |
+| `MOMO_*` | Thanh toán MoMo |
 
 Hỗ trợ legacy: `MONGO_URI`, `JWT_SECRET`
 

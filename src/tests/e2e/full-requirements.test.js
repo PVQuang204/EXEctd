@@ -283,32 +283,27 @@ describe('Full requirements E2E', () => {
       .set('Authorization', `Bearer ${ownerToken}`);
     record(g, 'Xác nhận COD paid', codConfirm.status === 200);
 
-    process.env.VNPAY_TMN_CODE = process.env.VNPAY_TMN_CODE || 'TEST';
-    process.env.VNPAY_HASH_SECRET = process.env.VNPAY_HASH_SECRET || 'SECRETSECRETSECRETSECRETSECRETSE';
-    process.env.VNPAY_URL = process.env.VNPAY_URL || 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-    process.env.VNPAY_RETURN_URL = process.env.VNPAY_RETURN_URL || 'http://localhost/cb';
-
     const order2 = await request(app)
       .post('/api/orders')
       .set('Authorization', `Bearer ${customerToken}`)
       .send({
         restaurantId,
         items: [{ foodId, quantity: 1 }],
-        deliveryAddress: 'VNPay test',
+        deliveryAddress: 'MoMo test',
       });
     if (order2.status === 201 && order2.body.data?._id) {
-      const vnpay = await request(app)
+      const momo = await request(app)
         .post(`/api/payments/${order2.body.data._id}`)
         .set('Authorization', `Bearer ${customerToken}`)
-        .send({ paymentMethod: 'vnpay' });
+        .send({ paymentMethod: 'momo' });
       record(
         g,
-        'Thanh toán VNPay (tạo URL)',
-        vnpay.status === 200 && !!vnpay.body.data.paymentUrl,
-        vnpay.body.message || ''
+        'Thanh toán MoMo (tạo URL)',
+        momo.status === 200 && !!momo.body.data.paymentUrl,
+        momo.body.message || ''
       );
     } else {
-      record(g, 'Thanh toán VNPay (tạo URL)', false, 'Không tạo được order phụ');
+      record(g, 'Thanh toán MoMo (tạo URL)', false, 'Không tạo được order phụ');
     }
   });
 

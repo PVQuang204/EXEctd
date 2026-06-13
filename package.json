@@ -55,7 +55,7 @@
       "src/repositories/**/*.js",
       "src/utils/**/*.js",
       "src/middleware/**/*.js",
-      "src/config/vnpay.js",
+      "src/config/momo.js",
       "src/models/**/*.js"
     ],
     "coverageThreshold": {

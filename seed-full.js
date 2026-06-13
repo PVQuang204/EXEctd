@@ -412,7 +412,7 @@ const RESTAURANT_DATA = [
 ];
 
 const ORDER_STATUSES_SAMPLE = ['pending', 'confirmed', 'preparing', 'ready', 'delivering', 'completed', 'completed', 'completed', 'completed', 'completed', 'cancelled'];
-const PAYMENT_METHODS_SAMPLE = ['cod', 'momo', 'vnpay', 'cod', 'cod', 'momo', 'cod'];
+const PAYMENT_METHODS_SAMPLE = ['cod', 'momo', 'cod', 'cod', 'cod', 'momo', 'cod'];
 const DELIVERY_ADDRESSES = [
   '123 Lý Thường Kiệt, Quận 10, TP.HCM',
   '456 Nguyễn Thị Minh Khai, Quận 3, TP.HCM',
