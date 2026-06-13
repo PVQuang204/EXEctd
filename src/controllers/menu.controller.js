@@ -45,3 +45,23 @@ exports.listPromotions = asyncHandler(async (req, res) => {
   const data = await menuService.listPromotions(req.params.restaurantId);
   res.json({ success: true, data });
 });
+
+exports.deleteCategory = asyncHandler(async (req, res) => {
+  await menuService.deleteCategory(req.user._id, req.params.restaurantId, req.params.id);
+  res.json({ success: true, message: 'Category deleted' });
+});
+
+exports.deleteFood = asyncHandler(async (req, res) => {
+  await menuService.deleteFood(req.user._id, req.params.id);
+  res.json({ success: true, message: 'Food deleted' });
+});
+
+exports.deleteCombo = asyncHandler(async (req, res) => {
+  await menuService.deleteCombo(req.user._id, req.params.id);
+  res.json({ success: true, message: 'Combo deleted' });
+});
+
+exports.deletePromotion = asyncHandler(async (req, res) => {
+  await menuService.deletePromotion(req.user._id, req.params.id);
+  res.json({ success: true, message: 'Promotion deleted' });
+});

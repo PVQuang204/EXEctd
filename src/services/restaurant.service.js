@@ -1,10 +1,11 @@
 const restaurantRepository = require('../repositories/restaurant.repository');
 const { uploadFromBuffer } = require('./upload.service');
 const { createNotification } = require('./notification.service');
+const { RESTAURANT_STATUSES } = require('../constants');
 const ApiError = require('../utils/ApiError');
 
 const createRestaurant = async (ownerId, data, files) => {
-  const payload = { ...data, ownerId, status: 'pending' };
+  const payload = { ...data, ownerId, status: RESTAURANT_STATUSES.PENDING };
   if (files?.coverImage?.[0]) {
     payload.coverImage = await uploadFromBuffer(files.coverImage[0].buffer, 'restaurants');
   }
@@ -53,7 +54,7 @@ const findNearby = ({ lat, lng, distance }) => {
 };
 
 const approveRestaurant = async (id) => {
-  const r = await restaurantRepository.updateById(id, { status: 'approved' });
+  const r = await restaurantRepository.updateById(id, { status: RESTAURANT_STATUSES.APPROVED });
   if (!r) throw new ApiError(404, 'Restaurant not found');
   await createNotification({
     userId: r.ownerId,
@@ -65,7 +66,7 @@ const approveRestaurant = async (id) => {
 };
 
 const rejectRestaurant = async (id) => {
-  const r = await restaurantRepository.updateById(id, { status: 'rejected' });
+  const r = await restaurantRepository.updateById(id, { status: RESTAURANT_STATUSES.REJECTED });
   if (!r) throw new ApiError(404, 'Restaurant not found');
   return r;
 };

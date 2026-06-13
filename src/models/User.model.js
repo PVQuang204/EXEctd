@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-
-const ROLES = ['customer', 'restaurant_owner', 'delivery_staff', 'admin'];
-const STATUSES = ['active', 'locked', 'pending'];
+const { ROLES, USER_STATUSES } = require('../constants');
 
 const userSchema = new mongoose.Schema(
   {
@@ -18,10 +16,10 @@ const userSchema = new mongoose.Schema(
     },
     password: { type: String, required: true, minlength: 6, select: false },
     phone: { type: String, trim: true },
-    role: { type: String, enum: ROLES, default: 'customer' },
+    role: { type: String, enum: Object.values(ROLES), default: ROLES.CUSTOMER },
     avatar: { type: String, default: null },
     refreshToken: { type: String, select: false },
-    status: { type: String, enum: STATUSES, default: 'active' },
+    status: { type: String, enum: Object.values(USER_STATUSES), default: USER_STATUSES.ACTIVE },
     resetPasswordToken: { type: String, select: false },
     resetPasswordExpire: { type: Date, select: false },
   },
@@ -46,4 +44,3 @@ userSchema.methods.generateResetPasswordToken = function () {
 };
 
 module.exports = mongoose.model('User', userSchema);
-module.exports.ROLES = ROLES;

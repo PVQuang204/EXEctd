@@ -13,12 +13,14 @@ const routes = require('./routes');
 const errorHandler = require('./middleware/errorHandler.middleware');
 const { apiLimiter } = require('./middleware/rateLimiter.middleware');
 const { configureCloudinary } = require('./config/cloudinary');
+const { requestLogger } = require('./middleware/requestLogger.middleware');
 
 configureCloudinary();
 
 const app = express();
 
 app.use(helmet());
+app.use(requestLogger);
 app.use(
   cors({
     origin: process.env.CLIENT_URL || '*',

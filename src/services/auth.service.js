@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const userRepository = require('../repositories/user.repository');
+const { ROLES, USER_STATUSES, ALLOWED_REGISTER_ROLES } = require('../constants');
 const ApiError = require('../utils/ApiError');
 const sendEmail = require('../utils/sendEmail');
 const {
@@ -17,6 +18,7 @@ const sanitizeUser = (user) => ({
   role: user.role,
   avatar: user.avatar,
   status: user.status,
+  createdAt: user.createdAt,
 });
 
 const issueTokens = async (user) => {
@@ -31,15 +33,14 @@ const register = async ({ fullName, email, password, phone, role }) => {
   if (await userRepository.findByEmail(email)) {
     throw new ApiError(400, 'Email already exists');
   }
-  const allowedRegisterRoles = ['customer', 'restaurant_owner', 'delivery_staff'];
-  const userRole = allowedRegisterRoles.includes(role) ? role : 'customer';
+  const userRole = ALLOWED_REGISTER_ROLES.includes(role) ? role : ROLES.CUSTOMER;
   const user = await userRepository.create({
     fullName,
     email,
     password,
     phone,
     role: userRole,
-    status: userRole === 'restaurant_owner' ? 'active' : 'active',
+    status: USER_STATUSES.ACTIVE,
   });
   return issueTokens(user);
 };
@@ -49,7 +50,9 @@ const login = async ({ email, password }) => {
   if (!user || !(await user.comparePassword(password))) {
     throw new ApiError(401, 'Invalid email or password');
   }
-  if (user.status === 'locked') throw new ApiError(403, 'Account is locked');
+  if (user.status === USER_STATUSES.LOCKED) {
+    throw new ApiError(403, 'Account is locked');
+  }
   return issueTokens(user);
 };
 

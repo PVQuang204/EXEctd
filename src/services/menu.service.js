@@ -22,6 +22,21 @@ const createCategory = async (ownerId, restaurantId, data) => {
 const listCategories = (restaurantId) =>
   categoryRepository.find({ restaurantId, isActive: true }, { sort: { sortOrder: 1 } });
 
+const deleteCategory = async (ownerId, restaurantId, categoryId) => {
+  if (!ownerId || !restaurantId || !categoryId) throw new ApiError(400, 'Missing required parameters');
+  await assertOwner(restaurantId, ownerId);
+  const category = await categoryRepository.findById(categoryId);
+  if (!category) throw new ApiError(404, 'Category not found');
+  if (category.restaurantId.toString() !== restaurantId.toString()) {
+    throw new ApiError(403, 'Category does not belong to this restaurant');
+  }
+  const foodCount = await foodRepository.count({ categoryId, restaurantId });
+  if (foodCount > 0) {
+    throw new ApiError(400, `Cannot delete category with ${foodCount} food(s). Remove foods first.`);
+  }
+  return categoryRepository.deleteById(categoryId);
+};
+
 // Foods
 const createFood = async (ownerId, data, file) => {
   await assertOwner(data.restaurantId, ownerId);
@@ -32,6 +47,7 @@ const createFood = async (ownerId, data, file) => {
 const updateFood = async (ownerId, id, data, file) => {
   const food = await foodRepository.findById(id);
   if (!food) throw new ApiError(404, 'Food not found');
+  if (!food.isAvailable) throw new ApiError(400, 'Food is not available');
   await assertOwner(food.restaurantId, ownerId);
   if (file) data.image = await uploadFromBuffer(file.buffer, 'foods');
   return foodRepository.updateById(id, data);
@@ -43,6 +59,14 @@ const listFoods = (restaurantId, categoryId) => {
   return foodRepository.find(filter);
 };
 
+const deleteFood = async (ownerId, id) => {
+  if (!ownerId || !id) throw new ApiError(400, 'Missing required parameters');
+  const food = await foodRepository.findById(id);
+  if (!food) throw new ApiError(404, 'Food not found');
+  await assertOwner(food.restaurantId, ownerId);
+  return foodRepository.deleteById(id);
+};
+
 // Combos
 const createCombo = async (ownerId, data, file) => {
   await assertOwner(data.restaurantId, ownerId);
@@ -52,6 +76,14 @@ const createCombo = async (ownerId, data, file) => {
 
 const listCombos = (restaurantId) =>
   comboRepository.find({ restaurantId, isActive: true });
+
+const deleteCombo = async (ownerId, id) => {
+  if (!ownerId || !id) throw new ApiError(400, 'Missing required parameters');
+  const combo = await comboRepository.findById(id);
+  if (!combo) throw new ApiError(404, 'Combo not found');
+  await assertOwner(combo.restaurantId, ownerId);
+  return comboRepository.deleteById(id);
+};
 
 // Promotions
 const createPromotion = async (ownerId, data) => {
@@ -67,6 +99,14 @@ const listPromotions = (restaurantId) =>
     endDate: { $gte: new Date() },
   });
 
+const deletePromotion = async (ownerId, id) => {
+  if (!ownerId || !id) throw new ApiError(400, 'Missing required parameters');
+  const promo = await promotionRepository.findById(id);
+  if (!promo) throw new ApiError(404, 'Promotion not found');
+  await assertOwner(promo.restaurantId, ownerId);
+  return promotionRepository.deleteById(id);
+};
+
 const applyPromotion = async (restaurantId, code, orderAmount) => {
   const promo = await promotionRepository.findOne({
     restaurantId,
@@ -76,6 +116,9 @@ const applyPromotion = async (restaurantId, code, orderAmount) => {
     endDate: { $gte: new Date() },
   });
   if (!promo) throw new ApiError(400, 'Invalid promotion code');
+  if (promo.maxUsage != null && promo.usedCount >= promo.maxUsage) {
+    throw new ApiError(400, 'Promotion usage limit reached');
+  }
   if (orderAmount < promo.minOrderAmount) {
     throw new ApiError(400, `Minimum order amount is ${promo.minOrderAmount}`);
   }
@@ -83,6 +126,9 @@ const applyPromotion = async (restaurantId, code, orderAmount) => {
     promo.discountType === 'percent'
       ? (orderAmount * promo.discountValue) / 100
       : promo.discountValue;
+  if (promo.maxDiscount != null) {
+    discount = Math.min(discount, promo.maxDiscount);
+  }
   discount = Math.min(discount, orderAmount);
   return { promotion: promo, discountAmount: discount };
 };
@@ -90,16 +136,16 @@ const applyPromotion = async (restaurantId, code, orderAmount) => {
 module.exports = {
   createCategory,
   listCategories,
+  deleteCategory,
   createFood,
   updateFood,
+  deleteFood,
   listFoods,
   createCombo,
+  deleteCombo,
   listCombos,
   createPromotion,
+  deletePromotion,
   listPromotions,
   applyPromotion,
-  categoryRepository,
-  foodRepository,
-  comboRepository,
-  promotionRepository,
 };

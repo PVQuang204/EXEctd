@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-
-const RESTAURANT_STATUS = ['pending', 'approved', 'rejected', 'suspended'];
+const { RESTAURANT_STATUSES } = require('../constants');
 
 const restaurantSchema = new mongoose.Schema(
   {
@@ -16,7 +15,11 @@ const restaurantSchema = new mongoose.Schema(
     latitude: { type: Number },
     longitude: { type: Number },
     locationUpdatedAt: { type: Date },
-    status: { type: String, enum: RESTAURANT_STATUS, default: 'pending' },
+    status: {
+      type: String,
+      enum: Object.values(RESTAURANT_STATUSES),
+      default: RESTAURANT_STATUSES.PENDING,
+    },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
     totalReviews: { type: Number, default: 0 },
     phone: { type: String, trim: true },
@@ -40,4 +43,4 @@ restaurantSchema.pre('save', function (next) {
 });
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);
-module.exports.RESTAURANT_STATUS = RESTAURANT_STATUS;
+module.exports.RESTAURANT_STATUSES = RESTAURANT_STATUSES;

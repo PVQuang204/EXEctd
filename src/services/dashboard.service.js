@@ -1,6 +1,7 @@
 const userRepository = require('../repositories/user.repository');
 const restaurantRepository = require('../repositories/restaurant.repository');
 const orderRepository = require('../repositories/order.repository');
+const { RESTAURANT_STATUSES, ORDER_STATUSES } = require('../constants');
 
 const getAdminDashboard = async () => {
   const now = new Date();
@@ -9,12 +10,12 @@ const getAdminDashboard = async () => {
 
   const [totalUsers, totalRestaurants, totalOrders, monthlyRevenue] = await Promise.all([
     userRepository.count(),
-    restaurantRepository.count({ status: 'approved' }),
+    restaurantRepository.count({ status: RESTAURANT_STATUSES.APPROVED }),
     orderRepository.count(),
     orderRepository.aggregate([
       {
         $match: {
-          status: 'completed',
+          status: ORDER_STATUSES.COMPLETED,
           createdAt: { $gte: startOfMonth },
         },
       },
@@ -34,7 +35,7 @@ const getAdminDashboard = async () => {
   ]);
 
   const revenueByMonth = await orderRepository.aggregate([
-    { $match: { status: 'completed', createdAt: { $gte: twelveMonthsAgo } } },
+    { $match: { status: ORDER_STATUSES.COMPLETED, createdAt: { $gte: twelveMonthsAgo } } },
     {
       $group: {
         _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } },
@@ -45,7 +46,7 @@ const getAdminDashboard = async () => {
   ]);
 
   const topFoods = await orderRepository.aggregate([
-    { $match: { status: 'completed' } },
+    { $match: { status: ORDER_STATUSES.COMPLETED } },
     { $unwind: '$items' },
     {
       $group: {
@@ -59,7 +60,7 @@ const getAdminDashboard = async () => {
   ]);
 
   const topRestaurants = await orderRepository.aggregate([
-    { $match: { status: 'completed' } },
+    { $match: { status: ORDER_STATUSES.COMPLETED } },
     {
       $group: {
         _id: '$restaurantId',

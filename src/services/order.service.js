@@ -1,39 +1,23 @@
+const mongoose = require('mongoose');
 const orderRepository = require('../repositories/order.repository');
 const foodRepository = require('../repositories/food.repository');
 const restaurantRepository = require('../repositories/restaurant.repository');
 const userRepository = require('../repositories/user.repository');
-const { ORDER_STATUSES } = require('../models/Order.model');
+const { ORDER_STATUSES, PAYMENT_STATUSES, STATUS_TRANSITIONS, SOCKET_EVENTS } = require('../constants');
 const { createNotification } = require('./notification.service');
 const { applyPromotion } = require('./menu.service');
 const { emitOrderEvent } = require('../sockets');
 const ApiError = require('../utils/ApiError');
 
-const STATUS_FLOW = {
-  pending: ['confirmed', 'cancelled'],
-  confirmed: ['preparing', 'cancelled'],
-  preparing: ['ready', 'cancelled'],
-  ready: ['delivering', 'cancelled'],
-  delivering: ['completed', 'cancelled'],
-  completed: [],
-  cancelled: [],
-};
-
-const SOCKET_EVENTS = {
-  pending: 'order_created',
-  confirmed: 'order_confirmed',
-  preparing: 'order_preparing',
-  ready: 'order_ready',
-  delivering: 'order_delivering',
-  completed: 'order_completed',
-  cancelled: 'order_cancelled',
-};
-
-const buildOrderItems = async (items) => {
+const buildOrderItems = async (items, restaurantId) => {
   const built = [];
   let subtotal = 0;
   for (const item of items) {
     const food = await foodRepository.findById(item.foodId);
     if (!food || !food.isAvailable) throw new ApiError(400, `Food ${item.foodId} unavailable`);
+    if (food.restaurantId.toString() !== restaurantId.toString()) {
+      throw new ApiError(400, `Food ${item.foodId} does not belong to this restaurant`);
+    }
     if (food.stock < item.quantity) throw new ApiError(400, `Insufficient stock for ${food.name}`);
     const lineSubtotal = food.price * item.quantity;
     built.push({
@@ -49,51 +33,71 @@ const buildOrderItems = async (items) => {
 };
 
 const createOrder = async (customerId, data) => {
-  const restaurant = await restaurantRepository.findById(data.restaurantId);
-  if (!restaurant || restaurant.status !== 'approved') {
-    throw new ApiError(400, 'Restaurant not available');
-  }
-  const { built, subtotal } = await buildOrderItems(data.items);
-  let discountAmount = 0;
-  if (data.promotionCode) {
-    const promo = await applyPromotion(data.restaurantId, data.promotionCode, subtotal);
-    discountAmount = promo.discountAmount;
-  }
-  const totalAmount = Math.max(0, subtotal - discountAmount);
-  const order = await orderRepository.create({
-    customerId,
-    restaurantId: data.restaurantId,
-    items: built,
-    totalAmount,
-    discountAmount,
-    deliveryAddress: data.deliveryAddress,
-    deliveryLocation: data.deliveryLocation,
-    note: data.note,
-    promotionCode: data.promotionCode,
-    status: 'pending',
-    paymentStatus: 'unpaid',
-    statusHistory: [{ status: 'pending', changedBy: customerId }],
-  });
-  for (const item of built) {
-    await foodRepository.updateById(item.foodId, {
-      $inc: { stock: -item.quantity, soldCount: item.quantity },
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const restaurant = await restaurantRepository.findById(data.restaurantId);
+    if (!restaurant || restaurant.status !== 'approved') {
+      throw new ApiError(400, 'Restaurant not available');
+    }
+
+    const { built, subtotal } = await buildOrderItems(data.items, data.restaurantId);
+
+    let discountAmount = 0;
+    if (data.promotionCode) {
+      const promo = await applyPromotion(data.restaurantId, data.promotionCode, subtotal);
+      discountAmount = promo.discountAmount;
+    }
+
+    const totalAmount = Math.max(0, subtotal - discountAmount);
+    const order = await orderRepository.create({
+      customerId,
+      restaurantId: data.restaurantId,
+      items: built,
+      totalAmount,
+      discountAmount,
+      deliveryAddress: data.deliveryAddress,
+      deliveryLocation: data.deliveryLocation,
+      note: data.note,
+      promotionCode: data.promotionCode,
+      status: ORDER_STATUSES.PENDING,
+      paymentStatus: PAYMENT_STATUSES.UNPAID,
+      statusHistory: [{ status: ORDER_STATUSES.PENDING, changedBy: customerId }],
     });
+
+    for (const item of built) {
+      await foodRepository.updateById(
+        item.foodId,
+        { $inc: { stock: -item.quantity, soldCount: item.quantity } },
+        { session }
+      );
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    await createNotification({
+      userId: restaurant.ownerId,
+      title: 'New order',
+      content: `New order #${order._id}`,
+      type: 'order',
+      metadata: { orderId: order._id },
+    });
+    emitOrderEvent(order, SOCKET_EVENTS[ORDER_STATUSES.PENDING]);
+
+    return order;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
   }
-  await createNotification({
-    userId: restaurant.ownerId,
-    title: 'New order',
-    content: `New order #${order._id}`,
-    type: 'order',
-    metadata: { orderId: order._id },
-  });
-  emitOrderEvent(order, SOCKET_EVENTS.pending);
-  return order;
 };
 
 const transitionStatus = async (orderId, newStatus, user, note) => {
   const order = await orderRepository.findById(orderId);
   if (!order) throw new ApiError(404, 'Order not found');
-  const allowed = STATUS_FLOW[order.status] || [];
+  const allowed = STATUS_TRANSITIONS[order.status] || [];
   if (!allowed.includes(newStatus)) {
     throw new ApiError(400, `Cannot transition from ${order.status} to ${newStatus}`);
   }
@@ -143,10 +147,16 @@ const getOrders = (filter, page = 1, limit = 20) => {
 };
 
 const getRevenueStats = async (restaurantId, startDate, endDate) => {
+  if (!restaurantId) throw new ApiError(400, 'restaurantId is required');
+  const start = startDate ? new Date(startDate) : new Date(0);
+  const end = endDate ? new Date(endDate) : new Date();
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    throw new ApiError(400, 'Invalid date format');
+  }
   const match = {
-    restaurantId,
-    status: 'completed',
-    createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) },
+    restaurantId: new mongoose.Types.ObjectId(restaurantId),
+    status: ORDER_STATUSES.COMPLETED,
+    createdAt: { $gte: start, $lte: end },
   };
   const [result] = await orderRepository.aggregate([
     { $match: match },
@@ -157,7 +167,7 @@ const getRevenueStats = async (restaurantId, startDate, endDate) => {
 
 const getTopSellingFoods = async (restaurantId, limit = 10) => {
   return orderRepository.aggregate([
-    { $match: { restaurantId, status: 'completed' } },
+    { $match: { restaurantId: new mongoose.Types.ObjectId(restaurantId), status: ORDER_STATUSES.COMPLETED } },
     { $unwind: '$items' },
     {
       $group: {

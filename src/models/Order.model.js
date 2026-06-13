@@ -1,14 +1,5 @@
 const mongoose = require('mongoose');
-
-const ORDER_STATUSES = [
-  'pending',
-  'confirmed',
-  'preparing',
-  'ready',
-  'delivering',
-  'completed',
-  'cancelled',
-];
+const { ORDER_STATUSES, PAYMENT_STATUSES } = require('../constants');
 
 const orderItemSchema = new mongoose.Schema(
   {
@@ -24,7 +15,7 @@ const orderItemSchema = new mongoose.Schema(
 
 const statusHistorySchema = new mongoose.Schema(
   {
-    status: { type: String, enum: ORDER_STATUSES, required: true },
+    status: { type: String, enum: Object.values(ORDER_STATUSES), required: true },
     note: { type: String },
     changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     changedAt: { type: Date, default: Date.now },
@@ -46,11 +37,11 @@ const orderSchema = new mongoose.Schema(
       coordinates: { type: [Number] },
     },
     note: { type: String, maxlength: 500 },
-    status: { type: String, enum: ORDER_STATUSES, default: 'pending' },
+    status: { type: String, enum: Object.values(ORDER_STATUSES), default: ORDER_STATUSES.PENDING },
     paymentStatus: {
       type: String,
-      enum: ['unpaid', 'paid', 'refunded', 'failed'],
-      default: 'unpaid',
+      enum: Object.values(PAYMENT_STATUSES),
+      default: PAYMENT_STATUSES.UNPAID,
     },
     promotionCode: { type: String },
     statusHistory: [statusHistorySchema],

@@ -6,6 +6,7 @@ const { uploadFromBuffer } = require('./upload.service');
 const { createNotification } = require('./notification.service');
 const { syncFoodRatingsFromReview } = require('./foodRating.service');
 const { emitToUser, emitToRestaurant } = require('../sockets');
+const { ORDER_STATUSES, NOTIFICATION_TYPES } = require('../constants');
 const ApiError = require('../utils/ApiError');
 
 const resolveFoodIds = async ({ foodId, orderId }) => {
@@ -24,7 +25,7 @@ const createReview = async (customerId, data, files = []) => {
     if (!order || order.customerId.toString() !== customerId.toString()) {
       throw new ApiError(403, 'Invalid order');
     }
-    if (order.status !== 'completed') {
+    if (order.status !== ORDER_STATUSES.COMPLETED) {
       throw new ApiError(400, 'Can only review completed orders');
     }
   }
@@ -79,7 +80,7 @@ const createReview = async (customerId, data, files = []) => {
     userId: restaurant.ownerId,
     title: 'New review',
     content: `New ${rating}-star review`,
-    type: 'review',
+    type: NOTIFICATION_TYPES.REVIEW,
     metadata: { reviewId: review._id, restaurantId },
   });
 

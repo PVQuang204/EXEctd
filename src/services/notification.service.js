@@ -9,7 +9,11 @@ const createNotification = async ({ userId, title, content, type = 'system', met
     type,
     metadata,
   });
-  emitToUser(userId.toString(), 'notification', notification);
+  try {
+    emitToUser(userId.toString(), 'notification', notification);
+  } catch (err) {
+    console.error('Socket emit failed:', err.message);
+  }
   return notification;
 };
 
