@@ -23,7 +23,14 @@ app.use(helmet());
 app.use(requestLogger);
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || '*',
+    origin: (origin, callback) => {
+      const allowed = process.env.CLIENT_URL?.replace(/\/+$/, '') || '*';
+      if (!origin || origin.replace(/\/+$/, '') === allowed) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+      }
+    },
     credentials: true,
   })
 );
