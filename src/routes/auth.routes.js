@@ -26,7 +26,6 @@ router.post(
   }),
   authController.login
 );
-
 router.post('/refresh', authController.refresh);
 router.post('/logout', authMiddleware, authController.logout);
 router.get('/me', authMiddleware, authController.getMe);

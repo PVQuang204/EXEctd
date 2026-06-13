@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const userRepository = require('../repositories/user.repository');
-const { ROLES, USER_STATUSES, ALLOWED_REGISTER_ROLES } = require('../constants');
+const { ROLES, USER_STATUSES } = require('../constants');
 const ApiError = require('../utils/ApiError');
 const sendEmail = require('../utils/sendEmail');
 const {
@@ -29,17 +29,16 @@ const issueTokens = async (user) => {
   return { accessToken, refreshToken, user: sanitizeUser(user) };
 };
 
-const register = async ({ fullName, email, password, phone, role }) => {
+const register = async ({ fullName, email, password, phone }) => {
   if (await userRepository.findByEmail(email)) {
     throw new ApiError(400, 'Email already exists');
   }
-  const userRole = ALLOWED_REGISTER_ROLES.includes(role) ? role : ROLES.CUSTOMER;
   const user = await userRepository.create({
     fullName,
     email,
     password,
     phone,
-    role: userRole,
+    role: ROLES.CUSTOMER,
     status: USER_STATUSES.ACTIVE,
   });
   return issueTokens(user);
