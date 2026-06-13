@@ -19,21 +19,33 @@ configureCloudinary();
 
 const app = express();
 
-app.use(helmet());
-app.use(requestLogger);
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      const allowed = process.env.CLIENT_URL?.replace(/\/+$/, '') || '*';
-      if (!origin || origin.replace(/\/+$/, '') === allowed) {
-        callback(null, true);
-      } else {
-        callback(new Error(`CORS: origin ${origin} not allowed`));
-      }
-    },
-    credentials: true,
-  })
-);
+const allowedOrigins = [
+  process.env.CLIENT_URL?.replace(/\/+$/, ""),
+  "http://localhost:5000",
+  "http://127.0.0.1:5000",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Cho phép request không có Origin (Postman, server-to-server)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const normalizedOrigin = origin.replace(/\/+$/, "");
+
+    if (allowedOrigins.includes(normalizedOrigin)) {
+      return callback(null, true);
+    }
+
+    return callback(
+      new Error(`CORS: origin ${origin} not allowed`)
+    );
+  },
+  credentials: true,
+}));
 app.use(apiLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));

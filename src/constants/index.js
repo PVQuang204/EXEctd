@@ -12,8 +12,8 @@ const USER_STATUSES = {
   PENDING: 'pending',
 };
 
-// Registration is only allowed for customers
-const ALLOWED_REGISTER_ROLES = [ROLES.CUSTOMER];
+// Registration is only allowed for customers, restaurant owners, and delivery staff
+const ALLOWED_REGISTER_ROLES = [ROLES.CUSTOMER, ROLES.RESTAURANT_OWNER, ROLES.DELIVERY_STAFF];
 
 // Restaurant
 const RESTAURANT_STATUSES = {

@@ -1,4 +1,4 @@
-const { MongoMemoryServer } = require('mongodb-memory-server');
+const { MongoMemoryReplSet } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const { loadEnv } = require('../config/env');
 
@@ -14,9 +14,11 @@ beforeAll(async () => {
   process.env.JWT_REFRESH_EXPIRE = '7d';
   process.env.CLIENT_URL = 'http://localhost:3000';
 
-  mongoServer = await MongoMemoryServer.create();
+  mongoServer = await MongoMemoryReplSet.create({
+    replSet: { count: 1, storageEngine: 'wiredTiger' },
+  });
   await mongoose.connect(mongoServer.getUri());
-});
+}, 120000);
 
 afterAll(async () => {
   await mongoose.disconnect();
