@@ -46,9 +46,11 @@ const updateLocation = async (id, ownerId, { latitude, longitude }) => {
 
 const findNearby = ({ lat, lng, distance }) => {
   const distanceMeters = (Number(distance) || 5) * 1000;
+  const parsedLat = Number(lat);
+  const parsedLng = Number(lng);
   return restaurantRepository.findNearby({
-    lat: Number(lat),
-    lng: Number(lng),
+    lat: parsedLat,
+    lng: parsedLng,
     distanceMeters,
   });
 };

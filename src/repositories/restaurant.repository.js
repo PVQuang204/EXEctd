@@ -6,17 +6,22 @@ class RestaurantRepository extends BaseRepository {
     super(Restaurant);
   }
 
-  findNearby({ lat, lng, distanceMeters = 5000, filter = {} }) {
-    return Restaurant.find({
-      ...filter,
-      status: 'approved',
-      location: {
-        $near: {
-          $geometry: { type: 'Point', coordinates: [lng, lat] },
-          $maxDistance: distanceMeters,
+  findNearby({ lat, lng, distance, filter = {} }) {
+    const query = { ...filter, status: 'approved' };
+    const hasGeo = Number.isFinite(lat) && Number.isFinite(lng);
+    if (hasGeo) {
+      const distanceMeters = (Number(distance) || 5) * 1000;
+      return Restaurant.find({
+        ...query,
+        location: {
+          $near: {
+            $geometry: { type: 'Point', coordinates: [lng, lat] },
+            $maxDistance: distanceMeters,
+          },
         },
-      },
-    });
+      });
+    }
+    return Restaurant.find(query).sort({ createdAt: -1 });
   }
 }
 
