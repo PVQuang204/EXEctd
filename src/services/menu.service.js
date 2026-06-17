@@ -20,7 +20,10 @@ const createCategory = async (ownerId, restaurantId, data) => {
 };
 
 const listCategories = (restaurantId) =>
-  categoryRepository.find({ restaurantId, isActive: true }, { sort: { sortOrder: 1 } });
+  categoryRepository.find(
+    { restaurantId, isActive: true, name: { $ne: 'Thực đơn set' } },
+    { sort: { sortOrder: 1 } },
+  );
 
 const deleteCategory = async (ownerId, restaurantId, categoryId) => {
   if (!ownerId || !restaurantId || !categoryId) throw new ApiError(400, 'Missing required parameters');
@@ -56,7 +59,10 @@ const updateFood = async (ownerId, id, data, file) => {
 const listFoods = (restaurantId, categoryId) => {
   const filter = { restaurantId, isAvailable: true };
   if (categoryId) filter.categoryId = categoryId;
-  return foodRepository.find(filter);
+  return foodRepository.find(filter, {
+    populate: { path: 'categoryId', select: 'name' },
+    sort: { createdAt: -1 },
+  });
 };
 
 const deleteFood = async (ownerId, id) => {
