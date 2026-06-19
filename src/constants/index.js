@@ -81,6 +81,25 @@ const NOTIFICATION_TYPES = {
   SYSTEM: 'system',
 };
 
+// Deposit thresholds (VND)
+const DEPOSIT_THRESHOLD = 2500000; // 2.5M VND
+const DEPOSIT_RATIO_BELOW = 0.15;  // 15% deposit for orders < 2.5M
+const DEPOSIT_RATIO_ABOVE = 0.20;  // 20% deposit for orders >= 2.5M
+
+const getDepositRatio = (totalAmount) =>
+  totalAmount < DEPOSIT_THRESHOLD ? DEPOSIT_RATIO_BELOW : DEPOSIT_RATIO_ABOVE;
+
+const getDepositAmount = (totalAmount) => {
+  const ratio = getDepositRatio(totalAmount);
+  return Math.round(totalAmount * ratio);
+};
+
+// Payment phases (deposit vs full payment)
+const PAYMENT_PHASES = {
+  DEPOSIT: 'deposit',
+  FULL: 'full',
+};
+
 module.exports = {
   ROLES,
   USER_STATUSES,
@@ -96,4 +115,10 @@ module.exports = {
   DEFAULT_LIMIT,
   MAX_LIMIT,
   NOTIFICATION_TYPES,
+  DEPOSIT_THRESHOLD,
+  DEPOSIT_RATIO_BELOW,
+  DEPOSIT_RATIO_ABOVE,
+  getDepositRatio,
+  getDepositAmount,
+  PAYMENT_PHASES,
 };

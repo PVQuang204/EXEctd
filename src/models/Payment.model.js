@@ -18,6 +18,11 @@ const paymentSchema = new mongoose.Schema(
     transactionId: { type: String, default: null },
     payosResponse: { type: mongoose.Schema.Types.Mixed },
     payosOrderCode: { type: Number, default: null },
+    paymentPhase: {
+      type: String,
+      enum: ['deposit', 'full'],
+      default: 'deposit',
+    },
   },
   { timestamps: true }
 );

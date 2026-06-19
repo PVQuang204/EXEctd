@@ -3,7 +3,7 @@ const orderRepository = require('../repositories/order.repository');
 const { createPayOSPaymentLink, verifyPayOSWebhook, getPayOSPaymentInfo } = require('../config/payos');
 const { createNotification } = require('./notification.service');
 const { emitOrderEvent } = require('../sockets');
-const { PAYMENT_METHODS, PAYMENT_STATUSES } = require('../constants');
+const { PAYMENT_METHODS, PAYMENT_STATUSES, getDepositAmount } = require('../constants');
 const ApiError = require('../utils/ApiError');
 
 const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => {
@@ -17,52 +17,81 @@ const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => 
   }
 
   let payment = await paymentRepository.findOne({ orderId });
-  if (!payment) {
-    payment = await paymentRepository.create({
-      orderId,
-      amount: order.totalAmount,
-      paymentMethod,
-      paymentStatus: PAYMENT_STATUSES.UNPAID,
-    });
+  if (payment) {
+    throw new ApiError(400, 'Payment already initiated for this order');
   }
 
+  const depositAmt = getDepositAmount(order.totalAmount);
+  const remainingAmt = order.totalAmount - depositAmt;
+
+  // Update order with deposit info
+  await orderRepository.updateById(orderId, {
+    depositAmount: depositAmt,
+    remainingAmount: remainingAmt,
+    paymentPhase: 'deposit',
+  });
+
   if (paymentMethod === PAYMENT_METHODS.COD) {
+    payment = await paymentRepository.create({
+      orderId,
+      amount: depositAmt,
+      paymentMethod,
+      paymentStatus: PAYMENT_STATUSES.UNPAID,
+      paymentPhase: 'deposit',
+    });
     await orderRepository.updateById(orderId, { paymentStatus: PAYMENT_STATUSES.UNPAID });
-    return { payment, message: 'Pay on delivery' };
+    return {
+      payment,
+      depositAmount: depositAmt,
+      remainingAmount: remainingAmt,
+      totalAmount: order.totalAmount,
+      message: `Thanh toán cọc ${Math.round((depositAmt / order.totalAmount) * 100)}% (${depositAmt.toLocaleString()}đ) khi nhận hàng. Còn lại: ${remainingAmt.toLocaleString()}đ`,
+    };
   }
 
   if (paymentMethod === PAYMENT_METHODS.PAYOS) {
-    // Generate a unique numeric order code for PayOS (max 9007199254740991)
-    // Use timestamp + random digits to avoid collision
-    const orderCode = Number(`${Date.now()}`.slice(-10) + `${Math.floor(Math.random() * 1000)}`.padStart(3, '0'));
+    const orderCode = Number(
+      `${Date.now()}`.slice(-10) + `${Math.floor(Math.random() * 1000)}`.padStart(3, '0')
+    );
 
-    // Build items list for PayOS
     const items = order.items.map((item) => ({
-      name: item.name.substring(0, 50), // PayOS limits item name
+      name: item.name.substring(0, 50),
       quantity: item.quantity,
       price: Math.round(item.price),
     }));
 
     const payosResult = await createPayOSPaymentLink({
       orderCode,
-      amount: Math.round(order.totalAmount),
-      description: `DH ${orderId}`.substring(0, 25),
+      amount: depositAmt,
+      description: `Coc ${orderId}`.substring(0, 25),
       items,
     });
 
-    // Save the PayOS order code for later webhook matching
-    payment.payosOrderCode = orderCode;
-    payment.payosResponse = payosResult;
-    await payment.save();
+    payment = await paymentRepository.create({
+      orderId,
+      amount: depositAmt,
+      paymentMethod,
+      paymentStatus: PAYMENT_STATUSES.UNPAID,
+      paymentPhase: 'deposit',
+      payosOrderCode: orderCode,
+      payosResponse: payosResult,
+    });
 
-    return { payment, paymentUrl: payosResult.checkoutUrl };
+    return {
+      payment,
+      paymentUrl: payosResult.checkoutUrl,
+      depositAmount: depositAmt,
+      remainingAmount: remainingAmt,
+      totalAmount: order.totalAmount,
+      depositPercent: Math.round((depositAmt / order.totalAmount) * 100),
+      message: `Vui lòng thanh toán cọc ${Math.round((depositAmt / order.totalAmount) * 100)}% (${depositAmt.toLocaleString()}đ). Số tiền còn lại: ${remainingAmt.toLocaleString()}đ sẽ thanh toán khi nhận hàng.`,
+    };
   }
 
   throw new ApiError(400, 'Invalid payment method');
 };
 
 const handlePayOSWebhook = async (webhookBody) => {
-  // Verify the webhook signature
   let verifiedData;
   try {
     verifiedData = verifyPayOSWebhook(webhookBody);
@@ -71,11 +100,8 @@ const handlePayOSWebhook = async (webhookBody) => {
   }
 
   const orderCode = verifiedData.orderCode;
-
-  // Find the payment by payosOrderCode
   const payment = await paymentRepository.findOne({ payosOrderCode: orderCode });
   if (!payment) {
-    // Could be a test webhook or unknown payment — just acknowledge
     return { success: false, message: 'Payment not found' };
   }
 
@@ -83,7 +109,6 @@ const handlePayOSWebhook = async (webhookBody) => {
     return { payment, success: true };
   }
 
-  // PayOS webhook code: "00" means success
   const webhookCode = webhookBody.code || verifiedData.code;
   const success = webhookCode === '00' || webhookCode === 0;
 
@@ -96,11 +121,12 @@ const handlePayOSWebhook = async (webhookBody) => {
     const order = await orderRepository.findById(payment.orderId);
     if (order) {
       order.paymentStatus = PAYMENT_STATUSES.PAID;
+      order.paymentPhase = 'deposit';
       await order.save();
       await createNotification({
         userId: order.customerId,
-        title: 'Thanh toán thành công',
-        content: `Đơn hàng #${order._id} đã thanh toán qua PayOS`,
+        title: 'Đặt cọc thành công',
+        content: `Đơn hàng #${order._id} đã đặt cọc thành công. Vui lòng thanh toán ${order.remainingAmount.toLocaleString()}đ khi nhận hàng.`,
         type: 'payment',
       });
       emitOrderEvent(order, 'payment_success');
@@ -110,10 +136,6 @@ const handlePayOSWebhook = async (webhookBody) => {
   return { payment, success };
 };
 
-/**
- * Handle PayOS return URL (GET redirect after payment).
- * PayOS redirects with query params: ?code=00&id=xxx&cancel=false&status=PAID&orderCode=xxx
- */
 const handlePayOSReturn = async (query) => {
   const { orderCode, code, status, cancel } = query;
 
@@ -126,19 +148,16 @@ const handlePayOSReturn = async (query) => {
     return { success: false, message: 'Payment not found' };
   }
 
-  // If already paid, just return success
   if (payment.paymentStatus === PAYMENT_STATUSES.PAID) {
     return { payment, success: true };
   }
 
-  // Check if canceled
   if (cancel === 'true' || status === 'CANCELLED') {
     payment.paymentStatus = PAYMENT_STATUSES.FAILED;
     await payment.save();
     return { payment, success: false };
   }
 
-  // Verify with PayOS API for security
   const success = code === '00' && status === 'PAID';
 
   if (success) {
@@ -153,11 +172,12 @@ const handlePayOSReturn = async (query) => {
         const order = await orderRepository.findById(payment.orderId);
         if (order && order.paymentStatus !== PAYMENT_STATUSES.PAID) {
           order.paymentStatus = PAYMENT_STATUSES.PAID;
+          order.paymentPhase = 'deposit';
           await order.save();
           await createNotification({
             userId: order.customerId,
-            title: 'Thanh toán thành công',
-            content: `Đơn hàng #${order._id} đã thanh toán qua PayOS`,
+            title: 'Đặt cọc thành công',
+            content: `Đơn hàng #${order._id} đã đặt cọc thành công. Vui lòng thanh toán ${order.remainingAmount.toLocaleString()}đ khi nhận hàng.`,
             type: 'payment',
           });
           emitOrderEvent(order, 'payment_success');
@@ -166,7 +186,6 @@ const handlePayOSReturn = async (query) => {
         return { payment, success: true };
       }
     } catch (err) {
-      // If PayOS API fails, fall through
       console.error('PayOS getPaymentInfo error:', err.message);
     }
   }
