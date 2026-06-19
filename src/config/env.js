@@ -50,10 +50,12 @@ const isSmtpConfigured = () => {
 
 const isCloudinaryConfigured = () => {
   loadEnv();
+  const placeholders = ['', 'your_', 'your-'];
+  const hasValid = (v) => v && !placeholders.some((p) => v.toLowerCase().startsWith(p));
   return !!(
-    process.env.CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_API_KEY &&
-    process.env.CLOUDINARY_API_SECRET
+    hasValid(process.env.CLOUDINARY_CLOUD_NAME) &&
+    hasValid(process.env.CLOUDINARY_API_KEY) &&
+    hasValid(process.env.CLOUDINARY_API_SECRET)
   );
 };
 
