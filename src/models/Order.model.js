@@ -27,11 +27,13 @@ const orderSchema = new mongoose.Schema(
   {
     customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     restaurantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', required: true },
-    driverId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     items: [orderItemSchema],
     totalAmount: { type: Number, required: true, min: 0 },
     discountAmount: { type: Number, default: 0 },
     deliveryAddress: { type: String, required: true },
+    deliveryName: { type: String, required: true },
+    deliveryPhone: { type: String, required: true },
+    deliveryTime: { type: Date },
     deliveryLocation: {
       type: { type: String, enum: ['Point'], default: 'Point' },
       coordinates: { type: [Number] },
@@ -52,7 +54,6 @@ const orderSchema = new mongoose.Schema(
 
 orderSchema.index({ customerId: 1, createdAt: -1 });
 orderSchema.index({ restaurantId: 1, status: 1 });
-orderSchema.index({ driverId: 1, status: 1 });
 
 module.exports = mongoose.model('Order', orderSchema);
 module.exports.ORDER_STATUSES = ORDER_STATUSES;

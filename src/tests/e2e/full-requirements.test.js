@@ -20,11 +20,9 @@ describe('Full requirements E2E', () => {
   let customerRefresh;
   let ownerToken;
   let adminToken;
-  let driverToken;
   let customerId;
   let ownerId;
   let adminId;
-  let driverId;
   let restaurantId;
   let categoryId;
   let foodId;
@@ -53,15 +51,6 @@ describe('Full requirements E2E', () => {
     customerToken = regCustomer.body.data.accessToken;
     customerRefresh = regCustomer.body.data.refreshToken;
     customerId = regCustomer.body.data.user._id;
-
-    const regDriver = await request(app).post('/api/auth/register').send({
-      fullName: 'Driver',
-      email: email('driver'),
-      password: 'password123',
-      role: 'delivery_staff',
-    });
-    driverToken = regDriver.body.data.accessToken;
-    driverId = regDriver.body.data.user._id;
 
     const admin = await User.create({
       fullName: 'Admin',
@@ -260,24 +249,6 @@ describe('Full requirements E2E', () => {
       record(g, `Trạng thái → ${s}`, r.status === 200);
     }
 
-    const assign = await request(app)
-      .patch(`/api/orders/${orderId}/assign-driver`)
-      .set('Authorization', `Bearer ${ownerToken}`)
-      .send({ driverId });
-    record(g, 'Gán shipper', assign.status === 200);
-
-    const delivering = await request(app)
-      .patch(`/api/orders/${orderId}/status`)
-      .set('Authorization', `Bearer ${driverToken}`)
-      .send({ status: 'delivering' });
-    record(g, 'Trạng thái → delivering', delivering.status === 200);
-
-    const completed = await request(app)
-      .patch(`/api/orders/${orderId}/status`)
-      .set('Authorization', `Bearer ${driverToken}`)
-      .send({ status: 'completed' });
-    record(g, 'Trạng thái → completed', completed.status === 200);
-
     const codConfirm = await request(app)
       .patch(`/api/payments/${orderId}/cod-confirm`)
       .set('Authorization', `Bearer ${ownerToken}`);
@@ -400,11 +371,6 @@ describe('Full requirements E2E', () => {
   test('Delivery, security, infrastructure', async () => {
     const g = 'Delivery / Infra';
 
-    const deliveryList = await request(app)
-      .get('/api/orders/delivery')
-      .set('Authorization', `Bearer ${driverToken}`);
-    record(g, 'Shipper xem đơn giao', deliveryList.status === 200);
-
     const health = await request(app).get('/api/health');
     record(g, 'Health check', health.status === 200);
 
@@ -420,11 +386,10 @@ describe('Full requirements E2E', () => {
     const orderDoc = orderId ? await Order.findById(orderId) : null;
     record(
       g,
-      'Order có customerId, restaurantId, driverId, items, statusHistory',
+      'Order có customerId, restaurantId, items, statusHistory',
       !!(
         orderDoc?.customerId &&
         orderDoc?.restaurantId &&
-        orderDoc?.driverId &&
         orderDoc?.items?.length &&
         orderDoc?.statusHistory?.length
       )

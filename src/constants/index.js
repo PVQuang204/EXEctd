@@ -2,7 +2,6 @@
 const ROLES = {
   CUSTOMER: 'customer',
   RESTAURANT_OWNER: 'restaurant_owner',
-  DELIVERY_STAFF: 'delivery_staff',
   ADMIN: 'admin',
 };
 
@@ -12,8 +11,8 @@ const USER_STATUSES = {
   PENDING: 'pending',
 };
 
-// Registration is only allowed for customers, restaurant owners, and delivery staff
-const ALLOWED_REGISTER_ROLES = [ROLES.CUSTOMER, ROLES.RESTAURANT_OWNER, ROLES.DELIVERY_STAFF];
+// Registration is only allowed for customers and restaurant owners
+const ALLOWED_REGISTER_ROLES = [ROLES.CUSTOMER, ROLES.RESTAURANT_OWNER];
 
 // Restaurant
 const RESTAURANT_STATUSES = {
@@ -29,8 +28,6 @@ const ORDER_STATUSES = {
   CONFIRMED: 'confirmed',
   PREPARING: 'preparing',
   READY: 'ready',
-  DELIVERING: 'delivering',
-  COMPLETED: 'completed',
   CANCELLED: 'cancelled',
 };
 
@@ -44,15 +41,14 @@ const PAYMENT_STATUSES = {
 const PAYMENT_METHODS = {
   COD: 'cod',
   MOMO: 'momo',
+  PAYOS: 'payos',
 };
 
 const STATUS_TRANSITIONS = {
   [ORDER_STATUSES.PENDING]: [ORDER_STATUSES.CONFIRMED, ORDER_STATUSES.CANCELLED],
   [ORDER_STATUSES.CONFIRMED]: [ORDER_STATUSES.PREPARING, ORDER_STATUSES.CANCELLED],
   [ORDER_STATUSES.PREPARING]: [ORDER_STATUSES.READY, ORDER_STATUSES.CANCELLED],
-  [ORDER_STATUSES.READY]: [ORDER_STATUSES.DELIVERING, ORDER_STATUSES.CANCELLED],
-  [ORDER_STATUSES.DELIVERING]: [ORDER_STATUSES.COMPLETED, ORDER_STATUSES.CANCELLED],
-  [ORDER_STATUSES.COMPLETED]: [],
+  [ORDER_STATUSES.READY]: [ORDER_STATUSES.CANCELLED],
   [ORDER_STATUSES.CANCELLED]: [],
 };
 
@@ -61,14 +57,13 @@ const SOCKET_EVENTS = {
   [ORDER_STATUSES.CONFIRMED]: 'order_confirmed',
   [ORDER_STATUSES.PREPARING]: 'order_preparing',
   [ORDER_STATUSES.READY]: 'order_ready',
-  [ORDER_STATUSES.DELIVERING]: 'order_delivering',
-  [ORDER_STATUSES.COMPLETED]: 'order_completed',
   [ORDER_STATUSES.CANCELLED]: 'order_cancelled',
 };
 
 const PAYMENT_STATUSES_ORDER = {
   [PAYMENT_METHODS.COD]: 'unpaid',
   [PAYMENT_METHODS.MOMO]: 'pending',
+  [PAYMENT_METHODS.PAYOS]: 'pending',
 };
 
 // Pagination
@@ -80,7 +75,6 @@ const MAX_LIMIT = 100;
 const NOTIFICATION_TYPES = {
   ORDER: 'order',
   PAYMENT: 'payment',
-  DELIVERY: 'delivery',
   RESTAURANT: 'restaurant',
   REVIEW: 'review',
   SYSTEM: 'system',

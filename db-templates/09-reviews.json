@@ -1,0 +1,17 @@
+[
+  {
+    "_id": { "$oid": "6a3700000000000000000500" },
+    "customerId": { "$oid": "6a2d5100c6f0888cdd825702" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "orderId": { "$oid": "6a3500000000000000000300" },
+    "foodId": null,
+    "foodIds": [
+      { "$oid": "6a2d512ec6f0888cdd825837" }
+    ],
+    "rating": 5,
+    "comment": "Món ăn rất ngon, giao hàng nhanh!",
+    "images": [],
+    "createdAt": { "$date": "2026-06-17T02:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T02:00:00.000Z" }
+  }
+]

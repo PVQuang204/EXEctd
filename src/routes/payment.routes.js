@@ -9,6 +9,11 @@ const router = express.Router();
 router.get('/momo/callback', paymentController.momoCallback);
 router.post('/momo/ipn', paymentController.momoIpn);
 
+// PayOS callbacks (public — no auth, called by PayOS server)
+router.post('/payos/webhook', paymentController.payosWebhook);
+router.get('/payos/return', paymentController.payosReturn);
+router.get('/payos/cancel', paymentController.payosCancel);
+
 // Protected routes
 router.use(authMiddleware);
 router.post('/:orderId', roleMiddleware('customer'), paymentController.create);

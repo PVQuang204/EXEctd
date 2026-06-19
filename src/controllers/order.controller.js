@@ -17,11 +17,6 @@ exports.updateStatus = asyncHandler(async (req, res) => {
   res.json({ success: true, data });
 });
 
-exports.assignDriver = asyncHandler(async (req, res) => {
-  const data = await orderService.assignDriver(req.params.id, req.body.driverId);
-  res.json({ success: true, data });
-});
-
 exports.myOrders = asyncHandler(async (req, res) => {
   const data = await orderService.getOrders(
     { customerId: req.user._id },
@@ -39,15 +34,6 @@ exports.restaurantOrders = asyncHandler(async (req, res) => {
     req.query.page,
     req.query.limit
   );
-  res.json({ success: true, data });
-});
-
-exports.deliveryOrders = asyncHandler(async (req, res) => {
-  const filter =
-    req.user.role === 'delivery_staff'
-      ? { $or: [{ driverId: req.user._id }, { status: 'ready', driverId: null }] }
-      : { driverId: req.user._id };
-  const data = await orderService.getOrders(filter, req.query.page, req.query.limit);
   res.json({ success: true, data });
 });
 

@@ -6,7 +6,6 @@ const NOTIFICATION_TYPES = [
   'restaurant',
   'review',
   'system',
-  'delivery',
 ];
 
 const notificationSchema = new mongoose.Schema(

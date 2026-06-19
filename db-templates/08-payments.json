@@ -1,0 +1,13 @@
+[
+  {
+    "_id": { "$oid": "6a3600000000000000000400" },
+    "orderId": { "$oid": "6a3500000000000000000300" },
+    "amount": 500000,
+    "paymentMethod": "cod",
+    "paymentStatus": "unpaid",
+    "transactionId": null,
+    "momoResponse": null,
+    "createdAt": { "$date": "2026-06-17T01:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T01:00:00.000Z" }
+  }
+]

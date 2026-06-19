@@ -1,0 +1,24 @@
+[
+  {
+    "_id": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "ownerId": { "$oid": "6a2d5100c6f0888cdd825701" },
+    "name": "Bếp Việt Restaurant",
+    "description": "Ẩm thực Việt truyền thống, chuyên các món set tiệc và đặc sản 3 miền",
+    "coverImage": null,
+    "logo": null,
+    "latitude": 10.762622,
+    "longitude": 106.660172,
+    "location": {
+      "type": "Point",
+      "coordinates": [106.660172, 10.762622]
+    },
+    "locationUpdatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "status": "approved",
+    "averageRating": 0,
+    "totalReviews": 0,
+    "phone": "0901234567",
+    "address": "123 Nguyễn Huệ, Quận 1, TP.HCM",
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  }
+]

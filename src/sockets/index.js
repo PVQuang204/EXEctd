@@ -32,9 +32,6 @@ const initSocket = (httpServer) => {
     if (socket.user.role === 'restaurant_owner') {
       socket.join(`owner:${socket.user._id}`);
     }
-    if (socket.user.role === 'delivery_staff') {
-      socket.join('delivery_staff');
-    }
     if (socket.user.role === 'admin') {
       socket.join('admin');
     }
@@ -65,10 +62,6 @@ const emitOrderEvent = (order, event) => {
   const payload = { orderId: order._id, status: order.status, order };
   emitToUser(order.customerId.toString(), event, payload);
   emitToRestaurant(order.restaurantId.toString(), event, payload);
-  if (order.driverId) {
-    emitToUser(order.driverId.toString(), event, payload);
-  }
-  io.to('delivery_staff').emit(event, payload);
 };
 
 module.exports = { initSocket, getIO, emitToUser, emitToRestaurant, emitOrderEvent };

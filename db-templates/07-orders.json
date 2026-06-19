@@ -1,0 +1,42 @@
+[
+  {
+    "_id": { "$oid": "6a3500000000000000000300" },
+    "customerId": { "$oid": "6a2d5100c6f0888cdd825702" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "items": [
+      {
+        "foodId": { "$oid": "6a2d512ec6f0888cdd825837" },
+        "comboId": null,
+        "name": "Gỏi ngó sen",
+        "price": 500000,
+        "quantity": 1,
+        "subtotal": 500000
+      }
+    ],
+    "totalAmount": 500000,
+    "discountAmount": 0,
+    "deliveryAddress": "456 Lê Lợi, Quận 1, TP.HCM",
+    "deliveryName": "Trần Thị Khách",
+    "deliveryPhone": "0912345678",
+    "deliveryTime": { "$date": "2026-06-20T12:00:00.000Z" },
+    "deliveryLocation": {
+      "type": "Point",
+      "coordinates": [106.665, 10.770]
+    },
+    "note": "Ít cay",
+    "status": "pending",
+    "paymentStatus": "unpaid",
+    "promotionCode": null,
+    "statusHistory": [
+      {
+        "status": "pending",
+        "note": "Đơn hàng được tạo",
+        "changedBy": { "$oid": "6a2d5100c6f0888cdd825702" },
+        "changedAt": { "$date": "2026-06-17T01:00:00.000Z" }
+      }
+    ],
+    "cancelReason": null,
+    "createdAt": { "$date": "2026-06-17T01:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T01:00:00.000Z" }
+  }
+]

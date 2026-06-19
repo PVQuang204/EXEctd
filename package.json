@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "seed": "node seed-full.js",
     "test": "jest --coverage --runInBand --forceExit",
     "test:watch": "jest --watch --runInBand",
     "test:unit": "jest --testPathPattern=unit --coverage",
@@ -14,10 +13,16 @@
     "test:requirements": "jest src/tests/e2e/full-requirements.test.js --runInBand --verbose",
     "test:all": "node test-all-features.js"
   },
-  "keywords": ["restaurant", "express", "mongodb", "socket.io"],
+  "keywords": [
+    "restaurant",
+    "express",
+    "mongodb",
+    "socket.io"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@payos/node": "^2.0.5",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
@@ -48,7 +53,9 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "roots": ["<rootDir>/src/tests"],
+    "roots": [
+      "<rootDir>/src/tests"
+    ],
     "collectCoverageFrom": [
       "src/services/**/*.js",
       "!src/services/upload.service.js",
@@ -67,7 +74,9 @@
         "statements": 55
       }
     },
-    "setupFilesAfterEnv": ["<rootDir>/src/tests/setup.js"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/tests/setup.js"
+    ],
     "testTimeout": 30000
   }
 }

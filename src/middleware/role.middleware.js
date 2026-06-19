@@ -12,12 +12,10 @@ const roleMiddleware = (...allowedRoles) => (req, res, next) => {
 const isAdmin = roleMiddleware(ROLES.ADMIN);
 const isRestaurantOwner = roleMiddleware(ROLES.RESTAURANT_OWNER);
 const isCustomer = roleMiddleware(ROLES.CUSTOMER);
-const isDeliveryStaff = roleMiddleware(ROLES.DELIVERY_STAFF);
 const isOwnerOrAdmin = roleMiddleware(ROLES.RESTAURANT_OWNER, ROLES.ADMIN);
 
 module.exports = roleMiddleware;
 module.exports.isAdmin = isAdmin;
 module.exports.isRestaurantOwner = isRestaurantOwner;
 module.exports.isCustomer = isCustomer;
-module.exports.isDeliveryStaff = isDeliveryStaff;
 module.exports.isOwnerOrAdmin = isOwnerOrAdmin;

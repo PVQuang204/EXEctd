@@ -17,6 +17,8 @@ const paymentSchema = new mongoose.Schema(
     },
     transactionId: { type: String, default: null },
     momoResponse: { type: mongoose.Schema.Types.Mixed },
+    payosResponse: { type: mongoose.Schema.Types.Mixed },
+    payosOrderCode: { type: Number, default: null },
   },
   { timestamps: true }
 );

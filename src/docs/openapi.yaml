@@ -7,18 +7,18 @@ info:
 
     **Base path:** `/api` — Swagger UI: `/api-docs`
 
-    **Roles:** `customer`, `restaurant_owner`, `delivery_staff`, `admin`
-    - Đăng ký API chỉ cho `customer`, `restaurant_owner`, `delivery_staff`
+    **Roles:** `customer`, `restaurant_owner`, `admin`
+    - Đăng ký API chỉ cho `customer`, `restaurant_owner`
     - Tài khoản `admin` cần tạo trong MongoDB (hoặc đổi role user có sẵn)
 
     **Luồng test gợi ý:**
     1. Owner đăng ký → tạo nhà hàng (status `pending`)
     2. Admin duyệt nhà hàng (`PATCH .../approve`)
     3. Owner tạo menu → Customer đặt đơn → thanh toán COD/MoMo
-    4. Owner cập nhật trạng thái đơn theo flow: pending → confirmed → preparing → ready → delivering → completed
+    4. Owner cập nhật trạng thái đơn theo flow: pending → confirmed → preparing → ready (ready = hoàn tất, customer có thể review)
 
     **Socket.IO** (kết nối kèm `auth.token` = access JWT):
-    `order_created`, `order_confirmed`, `order_preparing`, `order_ready`, `order_delivering`, `order_completed`, `order_cancelled`, `new_review`, `notification`
+    `order_created`, `order_confirmed`, `order_preparing`, `order_ready`, `order_cancelled`, `new_review`, `notification`
 
 servers:
   - url: http://localhost:5000
@@ -83,7 +83,7 @@ components:
           type: string
         role:
           type: string
-          enum: [customer, restaurant_owner, delivery_staff, admin]
+          enum: [customer, restaurant_owner, admin]
         avatar:
           type: string
           nullable: true
@@ -107,7 +107,7 @@ components:
           type: string
         role:
           type: string
-          enum: [customer, restaurant_owner, delivery_staff]
+          enum: [customer, restaurant_owner]
           default: customer
 
     LoginInput:
@@ -195,15 +195,8 @@ components:
       properties:
         status:
           type: string
-          enum: [pending, confirmed, preparing, ready, delivering, completed, cancelled]
+          enum: [pending, confirmed, preparing, ready, cancelled]
         note:
-          type: string
-
-    AssignDriverInput:
-      type: object
-      required: [driverId]
-      properties:
-        driverId:
           type: string
 
     PaymentCreateInput:
@@ -263,7 +256,7 @@ components:
           type: string
         status:
           type: string
-          enum: [pending, confirmed, preparing, ready, delivering, completed, cancelled]
+          enum: [pending, confirmed, preparing, ready, cancelled]
         paymentStatus:
           type: string
           enum: [unpaid, paid, refunded]
@@ -1034,16 +1027,6 @@ paths:
         '200':
           description: OK
 
-  /api/orders/delivery:
-    get:
-      tags: [Orders]
-      summary: Đơn giao hàng (delivery_staff)
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: OK
-
   /api/orders/{id}/status:
     patch:
       tags: [Orders]
@@ -1062,28 +1045,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OrderStatusInput'
-      responses:
-        '200':
-          description: OK
-
-  /api/orders/{id}/assign-driver:
-    patch:
-      tags: [Orders]
-      summary: Gán tài xế
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AssignDriverInput'
       responses:
         '200':
           description: OK

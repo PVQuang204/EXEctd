@@ -25,8 +25,8 @@ const createReview = async (customerId, data, files = []) => {
     if (!order || order.customerId.toString() !== customerId.toString()) {
       throw new ApiError(403, 'Invalid order');
     }
-    if (order.status !== ORDER_STATUSES.COMPLETED) {
-      throw new ApiError(400, 'Can only review completed orders');
+    if (order.status !== ORDER_STATUSES.READY) {
+      throw new ApiError(400, 'Can only review ready orders');
     }
   }
 

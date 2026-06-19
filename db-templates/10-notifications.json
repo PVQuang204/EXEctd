@@ -1,0 +1,29 @@
+[
+  {
+    "_id": { "$oid": "6a3800000000000000000600" },
+    "userId": { "$oid": "6a2d5100c6f0888cdd825702" },
+    "title": "Đơn hàng đã được xác nhận",
+    "content": "Đơn hàng #6a3500000000000000000300 của bạn đã được nhà hàng xác nhận",
+    "type": "order",
+    "isRead": false,
+    "metadata": {
+      "orderId": "6a3500000000000000000300",
+      "status": "confirmed"
+    },
+    "createdAt": { "$date": "2026-06-17T01:05:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T01:05:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "6a3800000000000000000601" },
+    "userId": { "$oid": "6a2d5100c6f0888cdd825701" },
+    "title": "Có đơn hàng mới",
+    "content": "Khách Trần Thị Khách vừa đặt đơn hàng mới trị giá 500.000đ",
+    "type": "order",
+    "isRead": false,
+    "metadata": {
+      "orderId": "6a3500000000000000000300"
+    },
+    "createdAt": { "$date": "2026-06-17T01:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T01:00:00.000Z" }
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "_id": { "$oid": "6a3400000000000000000200" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "title": "Giảm 10% cho đơn từ 1.000.000đ",
+    "description": "Áp dụng cho đơn hàng từ 1 triệu đồng trở lên",
+    "discountType": "percent",
+    "discountValue": 10,
+    "maxDiscount": 200000,
+    "minOrderAmount": 1000000,
+    "maxUsage": 100,
+    "usedCount": 0,
+    "code": "BEPVIET10",
+    "startDate": { "$date": "2026-06-01T00:00:00.000Z" },
+    "endDate": { "$date": "2026-12-31T23:59:59.000Z" },
+    "isActive": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "6a3400000000000000000201" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "title": "Giảm thẳng 50.000đ cho khách mới",
+    "description": "Áp dụng cho đơn hàng đầu tiên của khách hàng mới",
+    "discountType": "fixed",
+    "discountValue": 50000,
+    "maxDiscount": null,
+    "minOrderAmount": 200000,
+    "maxUsage": null,
+    "usedCount": 0,
+    "code": "WELCOME50",
+    "startDate": { "$date": "2026-06-01T00:00:00.000Z" },
+    "endDate": { "$date": "2026-12-31T23:59:59.000Z" },
+    "isActive": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  }
+]

@@ -18,6 +18,26 @@ exports.momoIpn = asyncHandler(async (req, res) => {
   res.status(200).json({ resultCode: data.success ? 0 : 1, message: 'ok' });
 });
 
+// PayOS webhook — called by PayOS server (POST)
+exports.payosWebhook = asyncHandler(async (req, res) => {
+  const data = await paymentService.handlePayOSWebhook(req.body);
+  // PayOS expects a 200 response to acknowledge the webhook
+  res.status(200).json({ success: data.success, message: 'ok' });
+});
+
+// PayOS return — user is redirected here after payment (GET)
+exports.payosReturn = asyncHandler(async (req, res) => {
+  const data = await paymentService.handlePayOSReturn(req.query);
+  const redirect = `${process.env.CLIENT_URL}/payment-result?success=${data.success}`;
+  res.redirect(redirect);
+});
+
+// PayOS cancel — user cancelled payment (GET)
+exports.payosCancel = asyncHandler(async (req, res) => {
+  const redirect = `${process.env.CLIENT_URL}/payment-result?success=false`;
+  res.redirect(redirect);
+});
+
 exports.confirmCOD = asyncHandler(async (req, res) => {
   const data = await paymentService.confirmCOD(req.params.orderId, req.user._id);
   res.json({ success: true, data });

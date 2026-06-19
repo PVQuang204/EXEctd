@@ -15,7 +15,7 @@ const getAdminDashboard = async () => {
     orderRepository.aggregate([
       {
         $match: {
-          status: ORDER_STATUSES.COMPLETED,
+          status: ORDER_STATUSES.READY,
           createdAt: { $gte: startOfMonth },
         },
       },
@@ -35,7 +35,7 @@ const getAdminDashboard = async () => {
   ]);
 
   const revenueByMonth = await orderRepository.aggregate([
-    { $match: { status: ORDER_STATUSES.COMPLETED, createdAt: { $gte: twelveMonthsAgo } } },
+    { $match: { status: ORDER_STATUSES.READY, createdAt: { $gte: twelveMonthsAgo } } },
     {
       $group: {
         _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } },
@@ -46,7 +46,7 @@ const getAdminDashboard = async () => {
   ]);
 
   const topFoods = await orderRepository.aggregate([
-    { $match: { status: ORDER_STATUSES.COMPLETED } },
+    { $match: { status: ORDER_STATUSES.READY } },
     { $unwind: '$items' },
     {
       $group: {
@@ -60,7 +60,7 @@ const getAdminDashboard = async () => {
   ]);
 
   const topRestaurants = await orderRepository.aggregate([
-    { $match: { status: ORDER_STATUSES.COMPLETED } },
+    { $match: { status: ORDER_STATUSES.READY } },
     {
       $group: {
         _id: '$restaurantId',

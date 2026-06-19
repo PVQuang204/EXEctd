@@ -1,4 +1,3 @@
-const paymentService = require('../../services/payment.service');
 const orderService = require('../../services/order.service');
 const userRepository = require('../../repositories/user.repository');
 const restaurantRepository = require('../../repositories/restaurant.repository');
@@ -8,7 +7,6 @@ const categoryRepository = require('../../repositories/category.repository');
 jest.mock('../../services/order.service', () => ({
   createOrder: jest.fn(),
   transitionStatus: jest.fn(),
-  assignDriver: jest.fn(),
   getRevenueStats: jest.fn(),
   getTopSellingFoods: jest.fn(),
 }));
@@ -16,16 +14,12 @@ jest.mock('../../services/order.service', () => ({
 describe('Order service extended', () => {
   let customer;
   let owner;
-  let driver;
   let restaurant;
   let food;
 
   beforeEach(async () => {
     orderService.createOrder.mockResolvedValue({ _id: '507f1f77bcf86cd799439011' });
     orderService.transitionStatus.mockImplementation((id, status) => Promise.resolve({ _id: id, status }));
-    orderService.assignDriver.mockImplementation((id, driverId) =>
-      Promise.resolve({ _id: id, driverId })
-    );
     orderService.getRevenueStats.mockResolvedValue({ totalRevenue: 10000, orderCount: 1 });
     orderService.getTopSellingFoods.mockResolvedValue([{ _id: 'food1', name: 'Item', totalSold: 5 }]);
     customer = await userRepository.create({
@@ -39,12 +33,6 @@ describe('Order service extended', () => {
       email: 'exto@test.com',
       password: 'password123',
       role: 'restaurant_owner',
-    });
-    driver = await userRepository.create({
-      fullName: 'D',
-      email: 'extd@test.com',
-      password: 'password123',
-      role: 'delivery_staff',
     });
     restaurant = await restaurantRepository.create({
       ownerId: owner._id,
@@ -61,7 +49,7 @@ describe('Order service extended', () => {
     });
   });
 
-  it('assigns driver and returns stats', async () => {
+  it('transitions order through to ready and returns stats', async () => {
     const order = await orderService.createOrder(customer._id, {
       restaurantId: restaurant._id,
       items: [{ foodId: food._id, quantity: 1 }],
@@ -69,12 +57,8 @@ describe('Order service extended', () => {
     });
     await orderService.transitionStatus(order._id, 'confirmed', owner);
     await orderService.transitionStatus(order._id, 'preparing', owner);
-    await orderService.transitionStatus(order._id, 'ready', owner);
-    const assigned = await orderService.assignDriver(order._id, driver._id);
-    expect(assigned.driverId).toBe(driver._id);
-
-    await orderService.transitionStatus(order._id, 'delivering', driver);
-    await orderService.transitionStatus(order._id, 'completed', driver);
+    const ready = await orderService.transitionStatus(order._id, 'ready', owner);
+    expect(ready.status).toBe('ready');
 
     const start = new Date(Date.now() - 86400000).toISOString();
     const end = new Date(Date.now() + 86400000).toISOString();

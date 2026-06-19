@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const orderRepository = require('../repositories/order.repository');
 const foodRepository = require('../repositories/food.repository');
 const restaurantRepository = require('../repositories/restaurant.repository');
-const userRepository = require('../repositories/user.repository');
 const { ORDER_STATUSES, PAYMENT_STATUSES, STATUS_TRANSITIONS, SOCKET_EVENTS } = require('../constants');
 const { createNotification } = require('./notification.service');
 const { applyPromotion } = require('./menu.service');
@@ -58,6 +57,9 @@ const createOrder = async (customerId, data) => {
       totalAmount,
       discountAmount,
       deliveryAddress: data.deliveryAddress,
+      deliveryName: data.deliveryName,
+      deliveryPhone: data.deliveryPhone,
+      deliveryTime: data.deliveryTime ? new Date(data.deliveryTime) : undefined,
       deliveryLocation: data.deliveryLocation,
       note: data.note,
       promotionCode: data.promotionCode,
@@ -116,22 +118,6 @@ const transitionStatus = async (orderId, newStatus, user, note) => {
   return order;
 };
 
-const assignDriver = async (orderId, driverId) => {
-  const driver = await userRepository.findById(driverId);
-  if (!driver || driver.role !== 'delivery_staff') {
-    throw new ApiError(400, 'Invalid delivery staff');
-  }
-  const order = await orderRepository.updateById(orderId, { driverId });
-  if (!order) throw new ApiError(404, 'Order not found');
-  await createNotification({
-    userId: driverId,
-    title: 'New delivery',
-    content: `You have been assigned order #${orderId}`,
-    type: 'delivery',
-  });
-  return order;
-};
-
 const getOrders = (filter, page = 1, limit = 20) => {
   const skip = (page - 1) * limit;
   return orderRepository.find(filter, {
@@ -141,7 +127,6 @@ const getOrders = (filter, page = 1, limit = 20) => {
     populate: [
       { path: 'customerId', select: 'fullName phone' },
       { path: 'restaurantId', select: 'name' },
-      { path: 'driverId', select: 'fullName phone' },
     ],
   });
 };
@@ -155,7 +140,7 @@ const getRevenueStats = async (restaurantId, startDate, endDate) => {
   }
   const match = {
     restaurantId: new mongoose.Types.ObjectId(restaurantId),
-    status: ORDER_STATUSES.COMPLETED,
+    status: ORDER_STATUSES.READY,
     createdAt: { $gte: start, $lte: end },
   };
   const [result] = await orderRepository.aggregate([
@@ -167,7 +152,7 @@ const getRevenueStats = async (restaurantId, startDate, endDate) => {
 
 const getTopSellingFoods = async (restaurantId, limit = 10) => {
   return orderRepository.aggregate([
-    { $match: { restaurantId: new mongoose.Types.ObjectId(restaurantId), status: ORDER_STATUSES.COMPLETED } },
+    { $match: { restaurantId: new mongoose.Types.ObjectId(restaurantId), status: ORDER_STATUSES.READY } },
     { $unwind: '$items' },
     {
       $group: {
@@ -185,7 +170,6 @@ const getTopSellingFoods = async (restaurantId, limit = 10) => {
 module.exports = {
   createOrder,
   transitionStatus,
-  assignDriver,
   getOrders,
   getRevenueStats,
   getTopSellingFoods,

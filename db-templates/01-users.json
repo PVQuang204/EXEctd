@@ -1,0 +1,35 @@
+[
+  {
+    "_id": { "$oid": "6a2d5100c6f0888cdd825700" },
+    "fullName": "Admin EXE",
+    "email": "admin@exe.vn",
+    "password": "$2a$12$L3J0R.0Kq9m7w8YJ4c7NHeXq4X.8Y4P5KjM1c4Z7w8n0J5b6Q8a3e",
+    "phone": "0900000000",
+    "role": "admin",
+    "status": "active",
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "6a2d5100c6f0888cdd825701" },
+    "fullName": "Nguyễn Văn Chủ",
+    "email": "owner.bepviet@exe.vn",
+    "password": "$2a$12$L3J0R.0Kq9m7w8YJ4c7NHeXq4X.8Y4P5KjM1c4Z7w8n0J5b6Q8a3e",
+    "phone": "0901234567",
+    "role": "restaurant_owner",
+    "status": "active",
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "6a2d5100c6f0888cdd825702" },
+    "fullName": "Trần Thị Khách",
+    "email": "khach@exe.vn",
+    "password": "$2a$12$L3J0R.0Kq9m7w8YJ4c7NHeXq4X.8Y4P5KjM1c4Z7w8n0J5b6Q8a3e",
+    "phone": "0912345678",
+    "role": "customer",
+    "status": "active",
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  }
+]
