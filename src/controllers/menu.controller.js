@@ -56,6 +56,11 @@ exports.deleteFood = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'Food deleted' });
 });
 
+exports.updateCombo = asyncHandler(async (req, res) => {
+  const data = await menuService.updateCombo(req.user._id, req.params.id, req.body, req.file);
+  res.json({ success: true, data });
+});
+
 exports.deleteCombo = asyncHandler(async (req, res) => {
   await menuService.deleteCombo(req.user._id, req.params.id);
   res.json({ success: true, message: 'Combo deleted' });

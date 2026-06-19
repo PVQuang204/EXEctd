@@ -44,13 +44,13 @@ const deleteCategory = async (ownerId, restaurantId, categoryId) => {
 const createFood = async (ownerId, data, file) => {
   await assertOwner(data.restaurantId, ownerId);
   if (file) data.image = await uploadFromBuffer(file.buffer, 'foods');
+  if (data.stock == null) data.stock = 999; // default unlimited stock
   return foodRepository.create(data);
 };
 
 const updateFood = async (ownerId, id, data, file) => {
   const food = await foodRepository.findById(id);
   if (!food) throw new ApiError(404, 'Food not found');
-  if (!food.isAvailable) throw new ApiError(400, 'Food is not available');
   await assertOwner(food.restaurantId, ownerId);
   if (file) data.image = await uploadFromBuffer(file.buffer, 'foods');
   return foodRepository.updateById(id, data);
@@ -78,6 +78,14 @@ const createCombo = async (ownerId, data, file) => {
   await assertOwner(data.restaurantId, ownerId);
   if (file) data.image = await uploadFromBuffer(file.buffer, 'combos');
   return comboRepository.create(data);
+};
+
+const updateCombo = async (ownerId, id, data, file) => {
+  const combo = await comboRepository.findById(id);
+  if (!combo) throw new ApiError(404, 'Combo not found');
+  await assertOwner(combo.restaurantId, ownerId);
+  if (file) data.image = await uploadFromBuffer(file.buffer, 'combos');
+  return comboRepository.updateById(id, data);
 };
 
 const listCombos = (restaurantId) =>
@@ -148,6 +156,7 @@ module.exports = {
   deleteFood,
   listFoods,
   createCombo,
+  updateCombo,
   deleteCombo,
   listCombos,
   createPromotion,

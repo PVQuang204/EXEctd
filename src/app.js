@@ -23,6 +23,7 @@ const allowedOrigins = [
   process.env.CLIENT_URL?.replace(/\/+$/, ""),
   "http://localhost:5000",
   "http://localhost:5173",
+  "https://mobile-restaurant-fnb.vercel.app",
   "https://mobile-restaurant-api.onrender.com",
 ].filter(Boolean);
 

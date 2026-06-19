@@ -18,6 +18,7 @@ router.post('/foods', upload.single('image'), menuController.createFood);
 router.put('/foods/:id', upload.single('image'), menuController.updateFood);
 router.delete('/foods/:id', menuController.deleteFood);
 router.post('/combos', upload.single('image'), menuController.createCombo);
+router.put('/combos/:id', upload.single('image'), menuController.updateCombo);
 router.delete('/combos/:id', menuController.deleteCombo);
 router.post('/promotions', menuController.createPromotion);
 router.delete('/promotions/:id', menuController.deletePromotion);

@@ -19,11 +19,17 @@ exports.momoIpn = asyncHandler(async (req, res) => {
 });
 
 // PayOS webhook — called by PayOS server (POST)
-exports.payosWebhook = asyncHandler(async (req, res) => {
-  const data = await paymentService.handlePayOSWebhook(req.body);
-  // PayOS expects a 200 response to acknowledge the webhook
-  res.status(200).json({ success: data.success, message: 'ok' });
-});
+exports.payosWebhook = async (req, res) => {
+  try {
+    const data = await paymentService.handlePayOSWebhook(req.body);
+    // PayOS expects a 200 response to acknowledge the webhook
+    res.status(200).json({ success: data.success, message: 'ok' });
+  } catch (err) {
+    console.error('PayOS webhook error:', err.message);
+    // Always return 200 so PayOS doesn't retry
+    res.status(200).json({ success: false, message: err.message });
+  }
+};
 
 // PayOS return — user is redirected here after payment (GET)
 exports.payosReturn = asyncHandler(async (req, res) => {

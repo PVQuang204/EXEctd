@@ -5,7 +5,7 @@ const { RESTAURANT_STATUSES } = require('../constants');
 const ApiError = require('../utils/ApiError');
 
 const createRestaurant = async (ownerId, data, files) => {
-  const payload = { ...data, ownerId, status: RESTAURANT_STATUSES.PENDING };
+  const payload = { ...data, ownerId, status: RESTAURANT_STATUSES.APPROVED };
   if (files?.coverImage?.[0]) {
     payload.coverImage = await uploadFromBuffer(files.coverImage[0].buffer, 'restaurants');
   }
