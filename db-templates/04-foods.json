@@ -731,6 +731,23 @@
     "tags": ["best_seller", "ga"]
   },
   {
+    "_id": { "$oid": "6a3a00000000000000000056" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000103" },
+    "name": "Bông cải xào thập cẩm",
+    "description": "Bông cải xào thập cẩm với nấm, đậu hành, cà rốt, hành tây — món rau giòn ngọt bổ dưỡng",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["rau_xao"]
+  },
+  {
     "_id": { "$oid": "6a3a0000000000000000002c" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
     "categoryId": { "$oid": "6a3233000000000000000105" },

@@ -2,16 +2,16 @@
   {
     "_id": { "$oid": "6a3b00000000000000000001" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Thực đơn set 1, 2, 3 người",
-    "description": "Combo thực đơn trọn gói phục vụ 1–3 người — giá 2.600.000đ\n\nBao gồm các món Best Seller đặc trưng: Gà bọc xôi chiên giòn, Gỏi ngó sen, Bò nướng lá lốt, Cơm chiên dương châu, Soup cua, và món chính tuỳ chọn theo sở thích.",
+    "name": "Thực đơn 1",
+    "description": "Combo trọn gói gồm: Gỏi ngó sen tôm thịt (500k), Bò lúc lắc khoai tây (550k), Gà hấp lá chanh (530k), Cá chẽm sốt chua ngọt (630k), Lẩu Thái hải sản (630k). Tổng giá trị 2.840.000đ — giá combo chỉ 2.600.000đ",
     "price": 2600000,
     "image": null,
     "items": [
       { "foodId": { "$oid": "6a3a00000000000000000001" }, "quantity": 1 },
-      { "foodId": { "$oid": "6a3a00000000000000000002" }, "quantity": 1 },
-      { "foodId": { "$oid": "6a3a00000000000000000006" }, "quantity": 1 },
-      { "foodId": { "$oid": "6a3a00000000000000000017" }, "quantity": 1 },
-      { "foodId": { "$oid": "6a3a00000000000000000008" }, "quantity": 1 }
+      { "foodId": { "$oid": "6a3a0000000000000000000d" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000026" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a0000000000000000002e" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a0000000000000000004f" }, "quantity": 1 }
     ],
     "isActive": true,
     "soldCount": 0,
@@ -21,18 +21,92 @@
   {
     "_id": { "$oid": "6a3b00000000000000000002" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Thực đơn set 4, 5, 6 người",
-    "description": "Combo thực đơn trọn gói phục vụ 4–6 người — giá 2.700.000đ\n\nBao gồm nhiều món Best Seller, phù hợp tiệc nhóm, họp mặt gia đình: Gà bọc xôi, Gỏi cổ hũ dừa, Bò nấu tiêu xanh, Tôm Hoàng Kim, Cá chẽm sốt chua ngọt, Cơm chiên hải sản, Lẩu gà tiềm hạt sen.",
-    "price": 2700000,
+    "name": "Thực đơn 2",
+    "description": "Combo trọn gói gồm: Gỏi cổ hũ dừa (500k), Bò Ragout (550k), Gà hấp muối (530k), Tôm Hoàng Kim (630k), Lẩu gà lá giang (530k). Tổng giá trị 2.740.000đ — giá combo chỉ 2.600.000đ",
+    "price": 2600000,
     "image": null,
     "items": [
-      { "foodId": { "$oid": "6a3a00000000000000000001" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000002" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000010" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000027" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a0000000000000000002c" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000041" }, "quantity": 1 }
+    ],
+    "isActive": true,
+    "soldCount": 0,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "6a3b00000000000000000003" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "name": "Thực đơn 3",
+    "description": "Combo trọn gói gồm: Gỏi bò bóp thấu (500k), Sườn nấu đậu (550k), Gà hấp cải xanh (530k), Cá Tai Tượng chiên giòn (630k), Lẩu cá Diêu Hồng (630k). Tổng giá trị 2.840.000đ — giá combo chỉ 2.600.000đ",
+    "price": 2600000,
+    "image": null,
+    "items": [
       { "foodId": { "$oid": "6a3a00000000000000000003" }, "quantity": 1 },
-      { "foodId": { "$oid": "6a3a00000000000000000012" }, "quantity": 1 },
-      { "foodId": { "$oid": "6a3a00000000000000000013" }, "quantity": 1 },
-      { "foodId": { "$oid": "6a3a0000000000000000000d" }, "quantity": 1 },
-      { "foodId": { "$oid": "6a3a00000000000000000019" }, "quantity": 1 },
-      { "foodId": { "$oid": "6a3a00000000000000000020" }, "quantity": 1 }
+      { "foodId": { "$oid": "6a3a0000000000000000001f" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000024" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a0000000000000000002f" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000049" }, "quantity": 1 }
+    ],
+    "isActive": true,
+    "soldCount": 0,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "6a3b00000000000000000004" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "name": "Thực đơn 4",
+    "description": "Combo trọn gói gồm: Gỏi cổ hũ dừa (500k), Heo nướng ngũ vị (550k), Gà bọc xôi chiên giòn (600k), Tôm Hoàng Kim (630k), Lẩu nấm hải sản (630k). Tổng giá trị 2.910.000đ — giá combo chỉ 2.600.000đ",
+    "price": 2600000,
+    "image": null,
+    "items": [
+      { "foodId": { "$oid": "6a3a00000000000000000002" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a0000000000000000001c" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a0000000000000000002b" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a0000000000000000002c" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000050" }, "quantity": 1 }
+    ],
+    "isActive": true,
+    "soldCount": 0,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "6a3b00000000000000000005" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "name": "Thực đơn 5",
+    "description": "Combo trọn gói gồm: Gỏi rau câu (500k), Bò nấu pate (550k), Gà hấp cải xanh (530k), Cá chẽm sốt chua ngọt (630k), Lẩu cá thác lác (630k). Tổng giá trị 2.840.000đ — giá combo chỉ 2.600.000đ",
+    "price": 2600000,
+    "image": null,
+    "items": [
+      { "foodId": { "$oid": "6a3a00000000000000000004" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000018" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000024" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a0000000000000000002e" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a0000000000000000004d" }, "quantity": 1 }
+    ],
+    "isActive": true,
+    "soldCount": 0,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "6a3b00000000000000000006" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "name": "Thực đơn 6",
+    "description": "Combo trọn gói gồm: Gỏi mực Thái Lan (500k), Bò hầm tiêu xanh (550k), Gà bọc xôi chiên giòn (600k), Bông cải xào thập cẩm (530k), Lẩu cua đồng hải sản (630k). Tổng giá trị 2.810.000đ — giá combo chỉ 2.600.000đ",
+    "price": 2600000,
+    "image": null,
+    "items": [
+      { "foodId": { "$oid": "6a3a00000000000000000005" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000011" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a0000000000000000002b" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000056" }, "quantity": 1 },
+      { "foodId": { "$oid": "6a3a00000000000000000048" }, "quantity": 1 }
     ],
     "isActive": true,
     "soldCount": 0,
