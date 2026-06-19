@@ -14,6 +14,7 @@ router.get('/:restaurantId/promotions', menuController.listPromotions);
 router.use(authMiddleware, roleMiddleware('restaurant_owner'));
 router.post('/:restaurantId/categories', menuController.createCategory);
 router.delete('/:restaurantId/categories/:id', menuController.deleteCategory);
+router.post('/upload', upload.single('image'), menuController.uploadImage);
 router.post('/foods', upload.single('image'), menuController.createFood);
 router.put('/foods/:id', upload.single('image'), menuController.updateFood);
 router.delete('/foods/:id', menuController.deleteFood);
