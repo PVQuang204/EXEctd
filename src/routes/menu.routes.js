@@ -11,6 +11,8 @@ router.get('/:restaurantId/foods', menuController.listFoods);
 router.get('/:restaurantId/combos', menuController.listCombos);
 router.get('/:restaurantId/promotions', menuController.listPromotions);
 
+router.post('/validate-cart', authMiddleware, menuController.validateCart);
+
 router.use(authMiddleware, roleMiddleware('restaurant_owner'));
 router.post('/:restaurantId/categories', menuController.createCategory);
 router.delete('/:restaurantId/categories/:id', menuController.deleteCategory);
