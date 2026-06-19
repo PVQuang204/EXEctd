@@ -89,17 +89,29 @@ exports.validateCart = asyncHandler(async (req, res) => {
   const insufficientStock = [];
 
   for (const item of items) {
-    const food = await menuService.getFoodById(item.foodId);
-    if (!food || !food.isAvailable) {
-      unavailable.push({ foodId: item.foodId, name: item.name });
-    } else if (food.restaurantId.toString() !== restaurantId) {
-      unavailable.push({ foodId: item.foodId, name: item.name, reason: 'wrong_restaurant' });
-    } else if (food.stock < item.quantity) {
+    let entity = await menuService.getFoodById(item.foodId);
+    let entityType = 'food';
+    if (!entity) {
+      entity = await menuService.getComboById(item.foodId);
+      entityType = 'combo';
+    }
+
+    if (!entity) {
+      unavailable.push({ foodId: item.foodId, name: item.name, type: 'not_found' });
+      continue;
+    }
+
+    const isAvailable = entityType === 'food' ? entity.isAvailable : entity.isActive;
+    if (!isAvailable) {
+      unavailable.push({ foodId: item.foodId, name: item.name, type: entityType });
+    } else if (entityType === 'food' && entity.restaurantId.toString() !== restaurantId) {
+      unavailable.push({ foodId: item.foodId, name: item.name, type: 'wrong_restaurant' });
+    } else if (entityType === 'food' && item.quantity > entity.stock) {
       insufficientStock.push({
         foodId: item.foodId,
         name: item.name,
         requested: item.quantity,
-        available: food.stock,
+        available: entity.stock,
       });
     }
   }

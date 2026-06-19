@@ -77,6 +77,10 @@ const getFoodById = async (id) => {
   return foodRepository.findById(id);
 };
 
+const getComboById = async (id) => {
+  return comboRepository.findById(id);
+};
+
 // Combos
 const createCombo = async (ownerId, data, file) => {
   await assertOwner(data.restaurantId, ownerId);
@@ -178,6 +182,7 @@ module.exports = {
   deleteFood,
   listFoods,
   getFoodById,
+  getComboById,
   createCombo,
   updateCombo,
   deleteCombo,
