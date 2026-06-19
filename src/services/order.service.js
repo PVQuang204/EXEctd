@@ -2,11 +2,21 @@ const mongoose = require('mongoose');
 const orderRepository = require('../repositories/order.repository');
 const foodRepository = require('../repositories/food.repository');
 const restaurantRepository = require('../repositories/restaurant.repository');
+const counterRepository = require('../repositories/counter.repository');
 const { ORDER_STATUSES, PAYMENT_STATUSES, STATUS_TRANSITIONS, SOCKET_EVENTS } = require('../constants');
 const { createNotification } = require('./notification.service');
 const { applyPromotion } = require('./menu.service');
 const { emitOrderEvent } = require('../sockets');
 const ApiError = require('../utils/ApiError');
+
+const generateOrderCode = async () => {
+  const today = new Date();
+  const dateStr = today.getFullYear().toString() +
+    String(today.getMonth() + 1).padStart(2, '0') +
+    String(today.getDate()).padStart(2, '0');
+  const seq = await counterRepository.getNextSequence('orderCode');
+  return `DH-${dateStr}-${String(seq).padStart(5, '0')}`;
+};
 
 const buildOrderItems = async (items, restaurantId) => {
   const built = [];
@@ -50,7 +60,9 @@ const createOrder = async (customerId, data) => {
     }
 
     const totalAmount = Math.max(0, subtotal - discountAmount);
+    const orderCode = await generateOrderCode();
     const order = await orderRepository.create({
+      orderCode,
       customerId,
       restaurantId: data.restaurantId,
       items: built,
@@ -82,9 +94,9 @@ const createOrder = async (customerId, data) => {
     await createNotification({
       userId: restaurant.ownerId,
       title: 'New order',
-      content: `New order #${order._id}`,
+      content: `New order ${orderCode}`,
       type: 'order',
-      metadata: { orderId: order._id },
+      metadata: { orderId: order._id, orderCode },
     });
     emitOrderEvent(order, SOCKET_EVENTS[ORDER_STATUSES.PENDING]);
 

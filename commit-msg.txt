@@ -1,0 +1,6 @@
+feat(backend): add formatted orderCode with counter and deposit fields
+
+- Counter.model.js: new counter model for auto-increment sequences
+- counter.repository.js: new repository with getNextSequence
+- Order.model.js: add orderCode field with unique index
+- order.service.js: generate orderCode as DH-YYYYMMDD-NNNNN format

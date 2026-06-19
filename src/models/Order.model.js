@@ -25,6 +25,7 @@ const statusHistorySchema = new mongoose.Schema(
 
 const orderSchema = new mongoose.Schema(
   {
+    orderCode: { type: String, unique: true },
     customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     restaurantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', required: true },
     items: [orderItemSchema],
@@ -57,6 +58,7 @@ const orderSchema = new mongoose.Schema(
 
 orderSchema.index({ customerId: 1, createdAt: -1 });
 orderSchema.index({ restaurantId: 1, status: 1 });
+orderSchema.index({ orderCode: 1 }, { unique: true });
 
 module.exports = mongoose.model('Order', orderSchema);
 module.exports.ORDER_STATUSES = ORDER_STATUSES;
