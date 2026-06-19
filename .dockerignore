@@ -1,0 +1,14 @@
+node_modules
+coverage
+.env
+.env.*
+!.env.docker
+.git
+.gitignore
+*.log
+npm-debug.log*
+.DS_Store
+dist
+.vscode
+scripts/
+db-templates/scripts/
