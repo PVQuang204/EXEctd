@@ -1,6 +1,5 @@
 const paymentRepository = require('../repositories/payment.repository');
 const orderRepository = require('../repositories/order.repository');
-const { createMoMoPaymentUrl, verifyMoMoCallback } = require('../config/momo');
 const { createPayOSPaymentLink, verifyPayOSWebhook, getPayOSPaymentInfo } = require('../config/payos');
 const { createNotification } = require('./notification.service');
 const { emitOrderEvent } = require('../sockets');
@@ -30,15 +29,6 @@ const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => 
   if (paymentMethod === PAYMENT_METHODS.COD) {
     await orderRepository.updateById(orderId, { paymentStatus: PAYMENT_STATUSES.UNPAID });
     return { payment, message: 'Pay on delivery' };
-  }
-
-  if (paymentMethod === PAYMENT_METHODS.MOMO) {
-    const paymentUrl = await createMoMoPaymentUrl({
-      amount: Math.round(order.totalAmount),
-      orderId: payment._id.toString(),
-      orderInfo: `Thanh toan don hang ${orderId}`,
-    });
-    return { payment, paymentUrl };
   }
 
   if (paymentMethod === PAYMENT_METHODS.PAYOS) {
@@ -71,47 +61,6 @@ const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => 
   throw new ApiError(400, 'Invalid payment method');
 };
 
-const handleMoMoCallback = async (params) => {
-  if (!verifyMoMoCallback(params)) {
-    throw new ApiError(400, 'Invalid MoMo signature');
-  }
-
-  const payment = await paymentRepository.findById(params.orderId);
-  if (!payment) throw new ApiError(404, 'Payment not found');
-  if (payment.paymentStatus === PAYMENT_STATUSES.PAID) {
-    return { payment, success: true };
-  }
-
-  const success = params.resultCode === 0 || params.resultCode === '0';
-  payment.paymentStatus = success ? PAYMENT_STATUSES.PAID : PAYMENT_STATUSES.FAILED;
-  payment.transactionId = String(params.transId);
-  payment.momoResponse = params;
-  await payment.save();
-
-  if (success) {
-    const order = await orderRepository.findById(payment.orderId);
-    if (order) {
-      order.paymentStatus = PAYMENT_STATUSES.PAID;
-      await order.save();
-      await createNotification({
-        userId: order.customerId,
-        title: 'Payment successful',
-        content: `Order #${order._id} paid via MoMo`,
-        type: 'payment',
-      });
-      emitOrderEvent(order, 'payment_success');
-    }
-  }
-  return { payment, success };
-};
-
-/**
- * Handle PayOS webhook callback.
- * PayOS sends a POST with { code, desc, data, signature } where
- * data contains: orderCode, amount, description, accountNumber,
- * reference, transactionDateTime, currency, paymentLinkId, code, desc, counterAccountBankId,
- * counterAccountBankName, counterAccountName, counterAccountNumber, virtualAccountName, virtualAccountNumber
- */
 const handlePayOSWebhook = async (webhookBody) => {
   // Verify the webhook signature
   let verifiedData;
@@ -248,7 +197,6 @@ const confirmCOD = async (orderId, ownerId) => {
 
 module.exports = {
   createPayment,
-  handleMoMoCallback,
   handlePayOSWebhook,
   handlePayOSReturn,
   confirmCOD,

@@ -88,8 +88,26 @@ const updateCombo = async (ownerId, id, data, file) => {
   return comboRepository.updateById(id, data);
 };
 
-const listCombos = (restaurantId) =>
-  comboRepository.find({ restaurantId, isActive: true });
+const listCombos = async (restaurantId) => {
+  const combos = await comboRepository.find({ restaurantId, isActive: true });
+  for (const combo of combos) {
+    if (combo.items && combo.items.length > 0) {
+      const foodIds = combo.items.map(i => i.foodId);
+      const foods = await foodRepository.findByIds(foodIds);
+      const foodMap = {};
+      foods.forEach(f => { foodMap[f._id.toString()] = f; });
+      combo.dishes = combo.items.map(i => {
+        const food = foodMap[i.foodId.toString()];
+        return food ? food.name : null;
+      }).filter(Boolean);
+      combo.serves = `${combo.items.reduce((sum, i) => sum + i.quantity, 0)} phần`;
+    } else {
+      combo.dishes = [];
+      combo.serves = null;
+    }
+  }
+  return combos;
+};
 
 const deleteCombo = async (ownerId, id) => {
   if (!ownerId || !id) throw new ApiError(400, 'Missing required parameters');

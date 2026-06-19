@@ -41,7 +41,6 @@ const PAYMENT_STATUSES = {
 
 const PAYMENT_METHODS = {
   COD: 'cod',
-  MOMO: 'momo',
   PAYOS: 'payos',
 };
 
@@ -65,7 +64,6 @@ const SOCKET_EVENTS = {
 
 const PAYMENT_STATUSES_ORDER = {
   [PAYMENT_METHODS.COD]: 'unpaid',
-  [PAYMENT_METHODS.MOMO]: 'pending',
   [PAYMENT_METHODS.PAYOS]: 'pending',
 };
 

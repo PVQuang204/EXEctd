@@ -7,17 +7,6 @@ exports.create = asyncHandler(async (req, res) => {
   res.json({ success: true, data });
 });
 
-exports.momoCallback = asyncHandler(async (req, res) => {
-  const data = await paymentService.handleMoMoCallback(req.query);
-  const redirect = `${process.env.CLIENT_URL}/payment-result?success=${data.success}`;
-  res.redirect(redirect);
-});
-
-exports.momoIpn = asyncHandler(async (req, res) => {
-  const data = await paymentService.handleMoMoCallback(req.body);
-  res.status(200).json({ resultCode: data.success ? 0 : 1, message: 'ok' });
-});
-
 // PayOS webhook — called by PayOS server (POST)
 exports.payosWebhook = async (req, res) => {
   try {

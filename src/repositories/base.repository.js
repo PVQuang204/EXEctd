@@ -43,6 +43,10 @@ class BaseRepository {
     return this.model.countDocuments(filter);
   }
 
+  findByIds(ids) {
+    return this.model.find({ _id: { $in: ids } });
+  }
+
   aggregate(pipeline) {
     return this.model.aggregate(pipeline);
   }

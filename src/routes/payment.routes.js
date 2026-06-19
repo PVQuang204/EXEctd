@@ -5,10 +5,6 @@ const roleMiddleware = require('../middleware/role.middleware');
 
 const router = express.Router();
 
-// MoMo callbacks (public — no auth)
-router.get('/momo/callback', paymentController.momoCallback);
-router.post('/momo/ipn', paymentController.momoIpn);
-
 // PayOS callbacks (public — no auth, called by PayOS server)
 router.post('/payos/webhook', paymentController.payosWebhook);
 router.get('/payos/return', paymentController.payosReturn);

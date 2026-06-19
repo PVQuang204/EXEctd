@@ -3,7 +3,7 @@ info:
   title: Mobile Restaurant Management API
   version: 1.1.0
   description: |
-    REST API cho hệ thống đặt món — JWT, Socket.IO, tìm nhà hàng theo GPS, MoMo, Cloudinary.
+    REST API cho hệ thống đặt món — JWT, Socket.IO, tìm nhà hàng theo GPS, PayOS, Cloudinary.
 
     **Base path:** `/api` — Swagger UI: `/api-docs`
 
@@ -14,7 +14,7 @@ info:
     **Luồng test gợi ý:**
     1. Owner đăng ký → tạo nhà hàng (status `pending`)
     2. Admin duyệt nhà hàng (`PATCH .../approve`)
-    3. Owner tạo menu → Customer đặt đơn → thanh toán COD/MoMo
+    3. Owner tạo menu → Customer đặt đơn → thanh toán COD/PayOS
     4. Owner cập nhật trạng thái đơn theo flow: pending → confirmed → preparing → ready (ready = hoàn tất, customer có thể review)
 
     **Socket.IO** (kết nối kèm `auth.token` = access JWT):
@@ -205,7 +205,7 @@ components:
       properties:
         paymentMethod:
           type: string
-          enum: [cod, momo]
+          enum: [cod, payos]
 
     ReviewCreateInput:
       type: object
@@ -1091,10 +1091,37 @@ paths:
         '200':
           description: OK
 
+  /api/payments/payos/webhook:
+    post:
+      tags: [Payments]
+      summary: PayOS webhook (IPN)
+      security: []
+      responses:
+        '200':
+          description: PayOS acknowledgment
+
+  /api/payments/payos/return:
+    get:
+      tags: [Payments]
+      summary: PayOS return URL (redirect browser)
+      security: []
+      responses:
+        '302':
+          description: Redirect về CLIENT_URL
+
+  /api/payments/payos/cancel:
+    get:
+      tags: [Payments]
+      summary: PayOS cancel URL
+      security: []
+      responses:
+        '302':
+          description: Redirect về CLIENT_URL
+
   /api/payments/{orderId}:
     post:
       tags: [Payments]
-      summary: Tạo thanh toán COD hoặc MoMo
+      summary: Tạo thanh toán COD hoặc PayOS
       security:
         - bearerAuth: []
       parameters:
@@ -1111,7 +1138,7 @@ paths:
               $ref: '#/components/schemas/PaymentCreateInput'
       responses:
         '200':
-          description: OK — MoMo trả thêm paymentUrl
+          description: OK — PayOS trả thêm paymentUrl
 
   /api/payments/{orderId}/cod-confirm:
     patch:
@@ -1128,33 +1155,6 @@ paths:
       responses:
         '200':
           description: OK
-
-  /api/payments/momo/callback:
-    get:
-      tags: [Payments]
-      summary: MoMo return URL (redirect browser)
-      security: []
-      parameters:
-        - in: query
-          name: orderId
-          schema:
-            type: string
-        - in: query
-          name: resultCode
-          schema:
-            type: integer
-      responses:
-        '302':
-          description: Redirect về CLIENT_URL
-
-  /api/payments/momo/ipn:
-    post:
-      tags: [Payments]
-      summary: MoMo IPN webhook
-      security: []
-      responses:
-        '200':
-          description: MoMo acknowledgment
 
   /api/reviews/{restaurantId}:
     get:

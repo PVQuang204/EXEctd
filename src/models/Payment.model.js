@@ -16,7 +16,6 @@ const paymentSchema = new mongoose.Schema(
       default: PAYMENT_STATUSES.UNPAID,
     },
     transactionId: { type: String, default: null },
-    momoResponse: { type: mongoose.Schema.Types.Mixed },
     payosResponse: { type: mongoose.Schema.Types.Mixed },
     payosOrderCode: { type: Number, default: null },
   },
