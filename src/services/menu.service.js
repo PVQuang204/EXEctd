@@ -101,16 +101,25 @@ const listCombos = async (restaurantId) => {
   for (const combo of combos) {
     if (combo.items && combo.items.length > 0) {
       const foodIds = combo.items.map(i => i.foodId);
-      const foods = await foodRepository.findByIds(foodIds);
+      const foods = await foodRepository.findByIds(foodIds, { populate: { path: 'categoryId', select: 'name' } });
       const foodMap = {};
       foods.forEach(f => { foodMap[f._id.toString()] = f; });
       combo.dishes = combo.items.map(i => {
         const food = foodMap[i.foodId.toString()];
         return food ? food.name : null;
       }).filter(Boolean);
+      combo.dishesWithCategories = combo.items.map(i => {
+        const food = foodMap[i.foodId.toString()];
+        if (!food) return null;
+        return {
+          name: food.name,
+          category: food.categoryId?.name || null,
+        };
+      }).filter(Boolean);
       combo.serves = `${combo.items.reduce((sum, i) => sum + i.quantity, 0)} phần`;
     } else {
       combo.dishes = [];
+      combo.dishesWithCategories = [];
       combo.serves = null;
     }
   }
