@@ -1,1 +1,0 @@
-feat: add cart validation endpoint to check food availability before checkout
