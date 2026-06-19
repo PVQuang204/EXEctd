@@ -2,7 +2,7 @@
   {
     "_id": { "$oid": "6a3233000000000000000100" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Thực đơn set",
+    "name": "Gỏi - Khai vị",
     "sortOrder": 0,
     "isActive": true,
     "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
@@ -11,7 +11,7 @@
   {
     "_id": { "$oid": "6a3233000000000000000101" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Món Best Seller",
+    "name": "Soup",
     "sortOrder": 1,
     "isActive": true,
     "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
@@ -20,7 +20,7 @@
   {
     "_id": { "$oid": "6a3233000000000000000102" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Gà - Vịt",
+    "name": "Bò - Heo - Dê",
     "sortOrder": 2,
     "isActive": true,
     "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
@@ -29,7 +29,7 @@
   {
     "_id": { "$oid": "6a3233000000000000000103" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Bò - Heo - Dê",
+    "name": "Gà - Vịt",
     "sortOrder": 3,
     "isActive": true,
     "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
@@ -38,7 +38,7 @@
   {
     "_id": { "$oid": "6a3233000000000000000104" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Hải sản",
+    "name": "Gà Bọc Xôi Chiên Giòn",
     "sortOrder": 4,
     "isActive": true,
     "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
@@ -47,7 +47,7 @@
   {
     "_id": { "$oid": "6a3233000000000000000105" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Gỏi - Khai vị",
+    "name": "Tôm - Cá - Mực - Cua",
     "sortOrder": 5,
     "isActive": true,
     "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
@@ -56,7 +56,7 @@
   {
     "_id": { "$oid": "6a3233000000000000000106" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Cơm",
+    "name": "Cơm Chiên - Mì Xào",
     "sortOrder": 6,
     "isActive": true,
     "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
@@ -65,7 +65,7 @@
   {
     "_id": { "$oid": "6a3233000000000000000107" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Lẩu",
+    "name": "Lẩu Bò - Heo - Dê",
     "sortOrder": 7,
     "isActive": true,
     "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
@@ -74,8 +74,26 @@
   {
     "_id": { "$oid": "6a3233000000000000000108" },
     "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
-    "name": "Soup",
+    "name": "Lẩu Gà - Vịt",
     "sortOrder": 8,
+    "isActive": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "6a3233000000000000000109" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "name": "Lẩu Hải Sản - Cá - Cua",
+    "sortOrder": 9,
+    "isActive": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "6a3233000000000000000110" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "name": "Tráng Miệng",
+    "sortOrder": 10,
     "isActive": true,
     "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
     "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" }

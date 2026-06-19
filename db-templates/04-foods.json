@@ -1,44 +1,9 @@
 [
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000001"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000101"
-    },
-    "name": "Gà bọc xôi chiên giòn",
-    "description": "Gà ta bọc xôi chiên giòn rụm, da vàng ươm, thịt mềm thơm — Best Seller",
-    "price": 550000,
-    "image": null,
-    "stock": 50,
-    "soldCount": 0,
-    "ratingAverage": 0,
-    "ratingCount": 0,
-    "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
-  },
-  {
-    "_id": {
-      "$oid": "6a3a00000000000000000002"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000105"
-    },
-    "name": "Gỏi ngó sen",
+    "_id": { "$oid": "6a3a00000000000000000001" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000100" },
+    "name": "Gỏi ngó sen tôm thịt",
     "description": "Gỏi ngó sen giòn ngọt với tôm thịt tươi, rau thơm và nước mắm chua ngọt — Best Seller",
     "price": 500000,
     "image": null,
@@ -47,26 +12,14 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "goi"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000003"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000105"
-    },
+    "_id": { "$oid": "6a3a00000000000000000002" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000100" },
     "name": "Gỏi cổ hũ dừa",
     "description": "Gỏi trộn trong cổ hũ dừa tươi, tôm thịt, hành tây, rau răm — Best Seller",
     "price": 500000,
@@ -76,28 +29,16 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "goi"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000004"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000105"
-    },
-    "name": "Gỏi bò thấu",
-    "description": "Gỏi bò tái chanh, bò trộn thấu với khế, chuối, rau thơm — Best Seller",
+    "_id": { "$oid": "6a3a00000000000000000003" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000100" },
+    "name": "Gỏi bò bóp thấu",
+    "description": "Bò bóp thấu mềm ngọt, trộn với hành tây, rau răm, gia vị chua ngọt đậm đà",
     "price": 500000,
     "image": null,
     "stock": 50,
@@ -105,28 +46,16 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["goi"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000005"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000105"
-    },
-    "name": "Chả giò hải sản sốt mayonnaise",
-    "description": "Chả giò hải sản giòn rụm, chấm sốt mayonnaise béo ngậy — Best Seller",
+    "_id": { "$oid": "6a3a00000000000000000004" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000100" },
+    "name": "Gỏi rau câu",
+    "description": "Gỏi rau câu giòn mát, trộn tôm thịt, rau thơm và nước mắm chua ngọt",
     "price": 500000,
     "image": null,
     "stock": 50,
@@ -134,28 +63,16 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["goi"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000006"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000103"
-    },
-    "name": "Bò nướng lá lốt",
-    "description": "Thịt bò bọc lá lốt nướng than hoa thơm lừng, cuộn bánh tráng — Best Seller",
+    "_id": { "$oid": "6a3a00000000000000000005" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000100" },
+    "name": "Gỏi mực Thái Lan",
+    "description": "Mực tươi thái lan trộn gỏi với rau thơm, đậu phộng, nước mắm Thái chua cay",
     "price": 500000,
     "image": null,
     "stock": 50,
@@ -163,28 +80,16 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["goi", "thai"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000007"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000104"
-    },
-    "name": "Mực chiên giòn",
-    "description": "Mực tươi chiên giòn xù, chấm muối tiêu chanh — Best Seller",
+    "_id": { "$oid": "6a3a00000000000000000006" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000101" },
+    "name": "Soup cua măng tây",
+    "description": "Soup cua thơm ngọt với măng tây tươi, trứng gà, nấm — Món ăn nhẹ nhàng bổ dưỡng",
     "price": 500000,
     "image": null,
     "stock": 50,
@@ -192,57 +97,84 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["soup"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000008"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000108"
-    },
-    "name": "Soup cua tóc tiên bắp hột",
-    "description": "Soup cua đặc sánh với tóc tiên, bắp hột, trứng gà — Best Seller",
-    "price": 450000,
+    "_id": { "$oid": "6a3a00000000000000000007" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000101" },
+    "name": "Soup cua bắp hột",
+    "description": "Soup cua béo ngậy với bắp hột ngọt, trứng gà chần, hành tây",
+    "price": 500000,
     "image": null,
     "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["soup"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000009"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000103"
-    },
-    "name": "Sườn nấu đậu",
-    "description": "Sườn heo non nấu đậu hũ, nước dùng ngọt thanh, thơm mùi hành — Best Seller",
+    "_id": { "$oid": "6a3a00000000000000000008" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000101" },
+    "name": "Soup cua gà",
+    "description": "Soup cua thơm phức với thịt gà mềm, nấm, hành tây và trứng gà",
+    "price": 500000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["soup"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000009" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000101" },
+    "name": "Soup cua nấm tuyết",
+    "description": "Soup cua thanh đạm với nấm tuyết, bắp ngọt, trứng gà và hành boa rô",
+    "price": 500000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["soup"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000000a" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000101" },
+    "name": "Soup cua bắp trái",
+    "description": "Soup cua ngọt thanh với bắp trái vàng, trứng gà chần, hành lá",
+    "price": 500000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["soup"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000000b" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò né Thiên Lý",
+    "description": "Bò né với rau Thiên Lý xào giòn, thịt bò mềm ngọt, nước sốt đậm đà — Best Seller",
     "price": 550000,
     "image": null,
     "stock": 50,
@@ -250,57 +182,33 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "bo"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000000a"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000103"
-    },
+    "_id": { "$oid": "6a3a0000000000000000000c" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò lúc lắc",
+    "description": "Bò lúc lắc xào với hành tây, ớt chuông, nước sốt mềm ngọt",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000000d" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
     "name": "Bò lúc lắc khoai tây",
-    "description": "Bò lúc lắc xào với ớt chuông, hành tây, ăn kèm khoai tây chiên — Best Seller",
-    "price": 500000,
-    "image": null,
-    "stock": 50,
-    "soldCount": 0,
-    "ratingAverage": 0,
-    "ratingCount": 0,
-    "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
-  },
-  {
-    "_id": {
-      "$oid": "6a3a0000000000000000000b"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000103"
-    },
-    "name": "Bò ragout",
-    "description": "Bò hầm rau củ kiểu Pháp, sốt đậm đà, ăn kèm bánh mì — Best Seller",
+    "description": "Bò lúc lắc dai ngon ăn kèm khoai tây chiên giòn rụm",
     "price": 550000,
     "image": null,
     "stock": 50,
@@ -308,173 +216,186 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000000c"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000104"
-    },
-    "name": "Miến xào cua",
-    "description": "Miến dai xào với thịt cua tươi, rau cải, nước xào thơm — Best Seller",
-    "price": 500000,
+    "_id": { "$oid": "6a3a0000000000000000000e" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò nấu đốp",
+    "description": "Bò nấu đốp mềm tan, nước dùng đậm đà, hành tây ngọt",
+    "price": 550000,
     "image": null,
     "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000000d"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000104"
-    },
-    "name": "Cá chẽm sốt chua ngọt",
-    "description": "Cá chẽm chiên giòn sốt chua ngọt kiểu Hoa, thơm ngon — Best Seller",
-    "price": 650000,
+    "_id": { "$oid": "6a3a0000000000000000000f" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò nấu bia",
+    "description": "Bò hầm mềm nấu với bia, cà rốt, khoai tây, gia vị thơm lừng",
+    "price": 550000,
     "image": null,
     "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000000e"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000104"
-    },
-    "name": "Cá Tai Tượng chiên xù",
-    "description": "Cá Tai Tượng chiên xù giòn, da giòn thịt trắng mềm, ăn với rau sống — Best Seller",
-    "price": 650000,
+    "_id": { "$oid": "6a3a00000000000000000010" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò Ragout",
+    "description": "Bò Ragout hầm mềm trong nước sốt cà chua đậm đà, ăn với bánh mì hoặc cơm",
+    "price": 550000,
     "image": null,
     "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000000f"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000104"
-    },
-    "name": "Cá Bóng Mú chưng tương",
-    "description": "Cá Bóng Mú hấp chưng tương hột, gừng và hành lá thơm lừng — Best Seller",
-    "price": 650000,
+    "_id": { "$oid": "6a3a00000000000000000011" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò hầm tiêu xanh",
+    "description": "Bò hầm mềm tan trong nước dùng thơm nồng vị tiêu xanh — Best Seller",
+    "price": 550000,
     "image": null,
     "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "bo"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000010"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000104"
-    },
-    "name": "Cá Tầm nướng muối ớt",
-    "description": "Cá Tầm nướng muối ớt xốt, thịt cá chắc, ăn kèm rau thơm — Best Seller",
-    "price": 650000,
+    "_id": { "$oid": "6a3a00000000000000000012" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò nướng sa tế",
+    "description": "Bò nướng thơm lừng với sa tế cay nồng, ăn kèm rau sống và bánh tráng",
+    "price": 550000,
     "image": null,
     "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo", "nuong"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000011"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000103"
-    },
+    "_id": { "$oid": "6a3a00000000000000000013" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò nướng chao",
+    "description": "Bò nướng chao đậm đà, thịt mềm thơm vị chao đặc trưng miền Nam",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo", "nuong"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000014" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò cuốn nấm kim châm",
+    "description": "Thịt bò cuốn nấm kim châm nướng, dai ngon kết hợp vị ngọt của nấm",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo", "nuong"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000015" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò cuốn phô mai",
+    "description": "Bò cuốn phô mai mozzarella nướng, kéo sợi phô mai dai ngon",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo", "nuong"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000016" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò cuốn mỡ chài",
+    "description": "Bò cuốn mỡ chài chiên giòn, vỏ bánh xù giòn rụm, nhân bò mềm ngọt",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000017" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Bò sốt xí muội",
+    "description": "Bò xào sốt xí muội chua ngọt đậm đà, ăn với cơm trắng rất ngon",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000018" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
     "name": "Bò nấu pate",
-    "description": "Bò hầm pate gan, sốt đậm đà, ăn kèm bánh mì nóng — Best Seller",
+    "description": "Bò nấu pate mềm béo, hương vị Pháp đậm đà, ăn với bánh mì nướng",
     "price": 550000,
     "image": null,
     "stock": 50,
@@ -482,28 +403,16 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000012"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000103"
-    },
-    "name": "Bò nấu tiêu xanh",
-    "description": "Bò hầm tiêu xanh, thịt bò mềm thấm vị cay nồng — Best Seller",
+    "_id": { "$oid": "6a3a00000000000000000019" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Chao bò",
+    "description": "Bò chao mềm thơm ướp với tỏi, hành, ăn kèm rau sống và bánh tráng",
     "price": 550000,
     "image": null,
     "stock": 50,
@@ -511,115 +420,305 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["bo"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000013"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000104"
-    },
-    "name": "Tôm Hoàng Kim",
-    "description": "Tôm sú lớn bọc trứng muối vàng óng, béo ngậy — Best Seller",
-    "price": 600000,
+    "_id": { "$oid": "6a3a0000000000000000001a" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Heo sữa quay",
+    "description": "Heo sữa quay da giòn vàng, thịt mềm ngọt, ăn kèm muối tôm và dưa chua",
+    "price": 550000,
     "image": null,
     "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["heo", "best_seller"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000014"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000102"
-    },
-    "name": "Gà hấp muối",
-    "description": "Gà ta hấp muối hột, da giòn thịt mềm, chấm muối tiêu chanh — Best Seller",
-    "price": 500000,
+    "_id": { "$oid": "6a3a0000000000000000001b" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Heo nướng cốt dừa",
+    "description": "Heo nướng cốt dừa thơm béo, da giòn vàng, vị ngọt của sữa dừa hòa quyện",
+    "price": 550000,
     "image": null,
     "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["heo", "nuong"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000015"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000102"
-    },
+    "_id": { "$oid": "6a3a0000000000000000001c" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Heo nướng ngũ vị",
+    "description": "Heo nướng ướp ngũ vị hương thơm nồng, da giòn rụm, thịt mềm ngọt",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["heo", "nuong"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000001d" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Giò heo hon",
+    "description": "Giò heo hầm mềm tan trong nước dùng ngọt thanh, ăn với bánh mì",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["heo"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000001e" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Giò heo giả cầy",
+    "description": "Giò heo giả cầy mềm tan, khoai sọ bùi, đậu phộng giòn — món ăn dân dã",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["heo"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000001f" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Sườn nấu đậu",
+    "description": "Sườn heo nấu đậu phộng mềm bùi, nước sốt đậm đà, ăn với cơm nóng",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["heo"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000020" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Sườn phô mai đút lò",
+    "description": "Sườn phô mai đút lò vàng ruộm, phô mai béo ngậy, thịt mềm ngọt",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["heo"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000021" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Sườn ragout",
+    "description": "Sườn heo ragout hầm mềm trong nước sốt cà chua, ăn với cơm hoặc bánh mì",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["heo"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000022" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Cà ri dê",
+    "description": "Cà ri dê đặc sản miền Tây, thịt dê mềm dai thơm nồi cà ri, ăn với bánh mì",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["de", "dac_san"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000023" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000102" },
+    "name": "Vú dê nướng",
+    "description": "Vú dê nướng than hồng thơm lừng, dai ngon đậm vị, ăn kèm rau sống",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["de", "nuong", "dac_san"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000024" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000103" },
+    "name": "Gà hấp cải xanh",
+    "description": "Gà hấp cải xanh mềm ngọt, rau cải xanh tươi giòn, nước mắm chua ngọt — Best Seller",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "ga"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000025" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000103" },
+    "name": "Gà tiềm hạt sen",
+    "description": "Gà tiềm hạt sen bùi bùi, nước dùng ngọt thanh, món bổ dưỡng — Best Seller",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "ga", "bo_duong"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000026" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000103" },
     "name": "Gà hấp lá chanh",
-    "description": "Gà ta hấp lá chanh thơm dịu, thịt ngọt, nước dùng trong — Best Seller",
-    "price": 500000,
+    "description": "Gà hấp lá chanh thơm nức, thịt mềm ngọt, da vàng óng",
+    "price": 530000,
     "image": null,
     "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["ga"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000016"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000104"
-    },
-    "name": "Tôm chấy tỏi",
-    "description": "Tôm sú chấy (xào) tỏi thơm lừng, vỏ giòn thịt ngọt — Best Seller",
+    "_id": { "$oid": "6a3a00000000000000000027" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000103" },
+    "name": "Gà hấp muối",
+    "description": "Gà hấp muối giữ trọn vị ngọt tự nhiên, thịt mềm thơm, da óng vàng",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["ga"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000028" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000103" },
+    "name": "Gà lá giang",
+    "description": "Gà nấu lá giang chua thanh, thịt mềm, nước dùng thơm mát — Best Seller",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "ga"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000029" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000103" },
+    "name": "Lẩu vịt om sấu",
+    "description": "Vịt om sấu chua chua ngọt ngọt, mềm tan, nước dùng thơm lừng — Best Seller",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "vit", "lau"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000002a" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000103" },
+    "name": "Vịt nấu chao",
+    "description": "Vịt nấu chao đậm đà miền Nam, thịt vịt mềm béo hòa vị chao thơm nồng",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["vit"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000002b" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000104" },
+    "name": "Gà bọc xôi chiên giòn",
+    "description": "Gà ta bọc xôi chiên giòn rụm, da vàng ươm, thịt mềm thơm — Best Seller",
     "price": 600000,
     "image": null,
     "stock": 50,
@@ -627,28 +726,169 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "ga"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000017"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000106"
-    },
-    "name": "Cơm chiên dương châu",
-    "description": "Cơm chiên với lạp xưởng, tôm, trứng, đậu Hà Lan — Best Seller",
+    "_id": { "$oid": "6a3a0000000000000000002c" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000105" },
+    "name": "Tôm Hoàng Kim",
+    "description": "Tôm hùm Hoàng Kim nấu phong cách hoàng gia, thịt ngọt dai, sốt đặc biệt — Best Seller",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "tom", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000002d" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000105" },
+    "name": "Tôm cháy tỏi",
+    "description": "Tôm rang cháy tỏi thơm nồng, vỏ giòn, thịt tôm ngọt dai",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["tom", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000002e" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000105" },
+    "name": "Cá chẽm sốt chua ngọt",
+    "description": "Cá chẽm chiên giòn rụm sốt chua ngọt, thịt cá trắng mềm ngọt",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["ca", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000002f" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000105" },
+    "name": "Cá tai tượng chiên giòn",
+    "description": "Cá tai tượng chiên giòn rụm, da vàng giòn, thịt trắng mềm ngọt",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["ca", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000030" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000105" },
+    "name": "Cá bóng mú chưng tương",
+    "description": "Cá bóng mú chưng tương hấp, thịt cá mềm ngọt, nước sốt tương đậm đà",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["ca", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000031" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000105" },
+    "name": "Cá tầm nướng muối ớt",
+    "description": "Cá tầm nướng muối ớt thơm lừng, thịt cá trắng mềm dai, da giòn — Best Seller",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "ca", "haisan", "nuong"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000032" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000105" },
+    "name": "Mực chiên giòn",
+    "description": "Mực chiên giòn rụm, ăn kèm tương ớt và mayonnaise — Best Seller",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "muc", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000033" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000105" },
+    "name": "Miến xào cua",
+    "description": "Miến xào với thịt cua biển, trứng gà, hành tây, rau củ — Best Seller",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "cua", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000034" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000105" },
+    "name": "Cơm chiên cua",
+    "description": "Cơm chiên vàng giòn với thịt cua biển, trứng gà, hành lá",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["cua", "haisan", "com_chien"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000035" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000106" },
+    "name": "Cơm chiên Dương Châu",
+    "description": "Cơm chiên Dương Châu thơm ngon với trứng, đậu hành, thịt xá xíu — Best Seller",
     "price": 500000,
     "image": null,
     "stock": 50,
@@ -656,28 +896,16 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "com_chien"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000018"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000106"
-    },
+    "_id": { "$oid": "6a3a00000000000000000036" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000106" },
     "name": "Cơm chiên cá mặn",
-    "description": "Cơm chiên với cá mặn xé nhỏ, hành lá, vị đậm đà — Best Seller",
+    "description": "Cơm chiên cá mặn thơm nồng, trứng gà, hành tây xào vàng",
     "price": 500000,
     "image": null,
     "stock": 50,
@@ -685,28 +913,16 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["com_chien"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000019"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000106"
-    },
+    "_id": { "$oid": "6a3a00000000000000000037" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000106" },
     "name": "Cơm chiên hải sản",
-    "description": "Cơm chiên với tôm, mực, cá viên, rau cải — Best Seller",
+    "description": "Cơm chiên hải sản với tôm, mực, cua, trứng gà, rau củ xào",
     "price": 500000,
     "image": null,
     "stock": 50,
@@ -714,217 +930,519 @@
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["com_chien", "haisan"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000001a"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000107"
-    },
-    "name": "Lẩu cá chép giòn",
-    "description": "Lẩu cá chép giòn nấu chua cay, ăn kèm bún tươi và rau — Best Seller",
-    "price": 650000,
+    "_id": { "$oid": "6a3a00000000000000000038" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000106" },
+    "name": "Mì xào tam tơ",
+    "description": "Mì xào tam tơ giòn tan với trứng, tôm, thịt, rau củ xào — Best Seller",
+    "price": 500000,
     "image": null,
-    "stock": 30,
+    "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "mi_xao"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000001b"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000107"
-    },
-    "name": "Lẩu cá chép nấu ngót",
-    "description": "Lẩu cá chép nấu ngót (chua nhẹ) đậm chất miền Tây — Best Seller",
-    "price": 650000,
+    "_id": { "$oid": "6a3a00000000000000000039" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000106" },
+    "name": "Mì xào giòn",
+    "description": "Mì xào giòn rụm ở đáy chảo, nhân thịt tôm phong phú, ăn với nước sốt",
+    "price": 500000,
     "image": null,
-    "stock": 30,
+    "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["mi_xao"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000001c"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000107"
-    },
-    "name": "Lẩu cá chép nấu riêu",
-    "description": "Lẩu cá chép nấu riêu cua, gạch cua đậm đà, ăn với bún — Best Seller",
-    "price": 650000,
+    "_id": { "$oid": "6a3a0000000000000000003a" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000106" },
+    "name": "Mì Ý xào bò bằm",
+    "description": "Mì Ý xào với bò bằm đậm đà, sốt cà chua thơm lừng, phô mai bào",
+    "price": 500000,
     "image": null,
-    "stock": 30,
+    "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["mi_xao"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000001d"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000107"
-    },
-    "name": "Lẩu cua đồng",
-    "description": "Lẩu cua đồng nấu mướp, rau đắng, bắp non chuẩn vị miền Tây — Best Seller",
-    "price": 650000,
+    "_id": { "$oid": "6a3a0000000000000000003b" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000106" },
+    "name": "Mì Ý xào hải sản",
+    "description": "Mì Ý xào hải sản tươi ngon với tôm, mực, nghêu, sốt kem thơm",
+    "price": 500000,
     "image": null,
-    "stock": 30,
+    "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["mi_xao", "haisan"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000001e"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000107"
-    },
-    "name": "Lẩu cá thác lác",
-    "description": "Lẩu cá thác lác nấu chua, giòn sần sật, ăn với bún — Best Seller",
-    "price": 600000,
+    "_id": { "$oid": "6a3a0000000000000000003c" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000106" },
+    "name": "Bún xào Singapore",
+    "description": "Bún xào Singapore Cay ngọt đậm đà, mì trứng giòn, tôm thịt thơm lừng",
+    "price": 500000,
     "image": null,
-    "stock": 30,
+    "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["mi_xao", "singapore"]
   },
   {
-    "_id": {
-      "$oid": "6a3a0000000000000000001f"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000107"
-    },
-    "name": "Lẩu Thái hải sản",
-    "description": "Lẩu Thái chua cay với tôm, mực, cá, nấm và rau — Best Seller",
+    "_id": { "$oid": "6a3a0000000000000000003d" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000107" },
+    "name": "Lẩu bắp bò",
+    "description": "Lẩu bắp bò dai giòn nướng, nước lẩu ngọt thanh, ăn kèm rau sống — Best Seller",
     "price": 550000,
     "image": null,
-    "stock": 30,
+    "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "lau", "bo"]
   },
   {
-    "_id": {
-      "$oid": "6a3a00000000000000000020"
-    },
-    "restaurantId": {
-      "$oid": "6a2d512ec6f0888cdd825828"
-    },
-    "categoryId": {
-      "$oid": "6a3233000000000000000107"
-    },
+    "_id": { "$oid": "6a3a0000000000000000003e" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000107" },
+    "name": "Lẩu đuôi bò",
+    "description": "Lẩu đuôi bò hầm mềm, nước dùng ngọt đậm, rau củ bổ dưỡng",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "bo"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000003f" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000107" },
+    "name": "Lẩu sườn hầm ngũ quả",
+    "description": "Lẩu sườn hầm ngũ quả bùi bùi, nước dùng ngọt thanh, dừa xiêm béo",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "heo"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000040" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000107" },
+    "name": "Lẩu bao tử hầm tiêu xanh",
+    "description": "Lẩu bao tử bò hầm tiêu xanh thơm nồng, bao tử giòn sần, nước dùng đậm đà",
+    "price": 550000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "bo"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000041" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000108" },
+    "name": "Lẩu gà lá giang",
+    "description": "Lẩu gà nấu lá giang chua thanh, thịt gà mềm ngọt, nước dùng thơm mát — Best Seller",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "lau", "ga"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000042" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000108" },
+    "name": "Lẩu gà tiềm ớt hiểm",
+    "description": "Lẩu gà tiềm ớt hiểm cay nồng, thịt gà mềm thơm, nước dùng đậm vị",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "ga"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000043" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000108" },
     "name": "Lẩu gà tiềm hạt sen",
-    "description": "Lẩu gà tiềm hạt sen, nước dùng ngọt thanh bổ dưỡng — Best Seller",
-    "price": 550000,
+    "description": "Lẩu gà tiềm hạt sen bùi bùi, ngọt thanh, món bổ dưỡng cho cả gia đình",
+    "price": 530000,
     "image": null,
-    "stock": 30,
+    "stock": 50,
     "soldCount": 0,
     "ratingAverage": 0,
     "ratingCount": 0,
     "isAvailable": true,
-    "createdAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "updatedAt": {
-      "$date": "2026-06-17T00:00:00.000Z"
-    },
-    "tags": [
-      "best_seller"
-    ]
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "ga", "bo_duong"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000044" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000108" },
+    "name": "Lẩu vịt om sấu",
+    "description": "Vịt om sấu chua chua ngọt ngọt, mềm tan, nước dùng thơm lừng — Best Seller",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "lau", "vit"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000045" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000108" },
+    "name": "Lẩu vịt nấu chao",
+    "description": "Vịt nấu chao miền Nam, thịt vịt mềm béo hòa vị chao thơm nồng",
+    "price": 530000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "vit"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000046" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu hải sản",
+    "description": "Lẩu hải sản tươi ngon với tôm, cua, mực, nghêu, sò điệp — Best Seller",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "lau", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000047" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu cua biển",
+    "description": "Lẩu cua biển ngọt thịt, nước lẩu đậm đà, ăn kèm rau và mì",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "cua", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000048" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu cua đồng hải sản",
+    "description": "Lẩu cua đồng kết hợp hải sản, nước dùng ngọt thanh, cua đồng béo ngậy",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "cua", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000049" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu cá Diêu Hồng",
+    "description": "Lẩu cá Diêu Hồng ngọt thịt, nước dùng trong veo, rau sống tươi rói",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "ca", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000004a" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu cá chép giòn",
+    "description": "Lẩu cá chép giòn rụm, thịt cá ngọt dai, nước dùng đậm đà — Best Seller",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "lau", "ca", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000004b" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu cá chép nấu ngót",
+    "description": "Lẩu cá chép nấu ngót chua nhẹ, thịt cá mềm ngọt, rau muống giòn",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "ca", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000004c" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu cá chép nấu riêu",
+    "description": "Lẩu cá chép nấu riêu đậm đà, riêu cua béo ngậy, thịt cá ngọt mềm",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "ca", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000004d" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu cá thác lác",
+    "description": "Lẩu cá thác lác thanh ngọt, cá thác lác dai giòn, nước dùng trong",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "ca", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000004e" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu cá tầm nấu măng",
+    "description": "Lẩu cá tầm nấu măng chua nhẹ, thịt cá tầm dai ngon, măng giòn sần",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "ca", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a0000000000000000004f" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu Thái hải sản",
+    "description": "Lẩu Thái chua cay thơm nồi, tôm cua mực tươi ngon, nước dùng đậm vị",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "thai", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000050" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000109" },
+    "name": "Lẩu nấm hải sản",
+    "description": "Lẩu nấm hải sản thanh đạm bổ dưỡng, nấm tươi giòn, tôm cua ngọt thịt",
+    "price": 630000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["lau", "haisan"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000051" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000110" },
+    "name": "Rau câu phô mai",
+    "description": "Rau câu phô mai mát lạnh, dai ngọt, lớp phô mai béo ngậy bên trong",
+    "price": 100000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["trang_mieng"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000052" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000110" },
+    "name": "Rau câu dừa",
+    "description": "Rau câu dừa thơm mát, béo ngậy vị dừa tươi, giải nhiệt cực ngon",
+    "price": 100000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["trang_mieng"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000053" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000110" },
+    "name": "Rau câu bánh flan",
+    "description": "Rau câu bánh flan hai lớp mềm mịn, caramel ngọt dịu — Best Seller",
+    "price": 100000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["best_seller", "trang_mieng"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000054" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000110" },
+    "name": "Đậu hũ Singapore",
+    "description": "Đậu hũ Singapore mềm mịn, sốt caramel đậm đà, đậu phộng giòn bùi",
+    "price": 100000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["trang_mieng"]
+  },
+  {
+    "_id": { "$oid": "6a3a00000000000000000055" },
+    "restaurantId": { "$oid": "6a2d512ec6f0888cdd825828" },
+    "categoryId": { "$oid": "6a3233000000000000000110" },
+    "name": "Trái cây",
+    "description": "Đĩa trái cây tươi theo mùa, đủ loại trái cây ngọt mát, tráng miệng nhẹ nhàng",
+    "price": 100000,
+    "image": null,
+    "stock": 50,
+    "soldCount": 0,
+    "ratingAverage": 0,
+    "ratingCount": 0,
+    "isAvailable": true,
+    "createdAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-06-17T00:00:00.000Z" },
+    "tags": ["trang_mieng"]
   }
 ]
