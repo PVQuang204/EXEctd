@@ -19,6 +19,8 @@ configureCloudinary();
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 const allowedOrigins = [
   process.env.CLIENT_URL?.replace(/\/+$/, ""),
   "http://localhost:5000",
