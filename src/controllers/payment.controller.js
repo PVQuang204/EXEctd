@@ -22,14 +22,20 @@ exports.payosWebhook = asyncHandler(async (req, res) => {
 // PayOS return — user is redirected here after payment (GET)
 exports.payosReturn = asyncHandler(async (req, res) => {
   const data = await paymentService.handlePayOSReturn(req.query);
-  const redirect = `${process.env.CLIENT_URL}/payment-result?success=${data.success}`;
-  res.redirect(redirect);
+  const payment = data.payment;
+  const params = new URLSearchParams({
+    success: String(data.success),
+    orderId: payment?.orderId || '',
+    cancel: 'false',
+  });
+  res.redirect(`${process.env.CLIENT_URL}/payment-result?${params.toString()}`);
 });
 
 // PayOS cancel — user cancelled payment (GET)
 exports.payosCancel = asyncHandler(async (req, res) => {
-  const redirect = `${process.env.CLIENT_URL}/payment-result?success=false`;
-  res.redirect(redirect);
+  const { orderId } = req.query;
+  const params = new URLSearchParams({ success: 'false', cancel: 'true', orderId: orderId || '' });
+  res.redirect(`${process.env.CLIENT_URL}/payment-result?${params.toString()}`);
 });
 
 exports.confirmCOD = asyncHandler(async (req, res) => {

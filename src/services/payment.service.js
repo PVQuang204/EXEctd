@@ -65,6 +65,8 @@ const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => 
       amount: depositAmt,
       description: `Coc ${orderId}`.substring(0, 25),
       items,
+      cancelUrl: `${process.env.CLIENT_URL}/payment-result?cancel=true&orderId=${orderId}`,
+      returnUrl: `${process.env.CLIENT_URL}/payment-result?success=true&orderId=${orderId}&deposit=${depositAmt}&remaining=${remainingAmt}&total=${order.totalAmount}`,
     });
 
     payment = await paymentRepository.create({

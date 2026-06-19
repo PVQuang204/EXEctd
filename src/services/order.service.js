@@ -22,17 +22,29 @@ const buildOrderItems = async (items, restaurantId) => {
   const built = [];
   let subtotal = 0;
   for (const item of items) {
-    const food = await foodRepository.findById(item.foodId);
-    if (!food || !food.isAvailable) throw new ApiError(400, `Food ${item.foodId} unavailable`);
-    if (food.restaurantId.toString() !== restaurantId.toString()) {
-      throw new ApiError(400, `Food ${item.foodId} does not belong to this restaurant`);
+    let entity = await foodRepository.findById(item.foodId);
+    let entityType = 'food';
+    if (!entity) {
+      entity = await require('../repositories/combo.repository').findById(item.foodId);
+      entityType = 'combo';
     }
-    if (food.stock < item.quantity) throw new ApiError(400, `Insufficient stock for ${food.name}`);
-    const lineSubtotal = food.price * item.quantity;
+
+    if (!entity) throw new ApiError(400, `Item ${item.foodId} not found`);
+    const isAvailable = entityType === 'food' ? entity.isAvailable : entity.isActive;
+    if (!isAvailable) throw new ApiError(400, `${item.name || entity.name} is not available`);
+    if (entityType === 'food' && entity.restaurantId.toString() !== restaurantId.toString()) {
+      throw new ApiError(400, `${item.name || entity.name} does not belong to this restaurant`);
+    }
+    if (entityType === 'food' && entity.stock < item.quantity) {
+      throw new ApiError(400, `Insufficient stock for ${entity.name}`);
+    }
+
+    const lineSubtotal = entity.price * item.quantity;
     built.push({
-      foodId: food._id,
-      name: food.name,
-      price: food.price,
+      foodId: entityType === 'food' ? entity._id : null,
+      comboId: entityType === 'combo' ? entity._id : null,
+      name: entity.name,
+      price: entity.price,
       quantity: item.quantity,
       subtotal: lineSubtotal,
     });
@@ -75,17 +87,20 @@ const createOrder = async (customerId, data) => {
       deliveryLocation: data.deliveryLocation,
       note: data.note,
       promotionCode: data.promotionCode,
+      paymentMethod: data.paymentMethod || null,
       status: ORDER_STATUSES.PENDING,
       paymentStatus: PAYMENT_STATUSES.UNPAID,
       statusHistory: [{ status: ORDER_STATUSES.PENDING, changedBy: customerId }],
     });
 
     for (const item of built) {
-      await foodRepository.updateById(
-        item.foodId,
-        { $inc: { stock: -item.quantity, soldCount: item.quantity } },
-        { session }
-      );
+      if (item.foodId) {
+        await foodRepository.updateById(
+          item.foodId,
+          { $inc: { stock: -item.quantity, soldCount: item.quantity } },
+          { session }
+        );
+      }
     }
 
     await session.commitTransaction();

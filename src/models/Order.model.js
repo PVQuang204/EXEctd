@@ -44,6 +44,7 @@ const orderSchema = new mongoose.Schema(
     },
     note: { type: String, maxlength: 500 },
     status: { type: String, enum: Object.values(ORDER_STATUSES), default: ORDER_STATUSES.PENDING },
+    paymentMethod: { type: String, enum: ['cod', 'payos'], default: null },
     paymentStatus: {
       type: String,
       enum: Object.values(PAYMENT_STATUSES),
