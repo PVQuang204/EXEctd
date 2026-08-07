@@ -4,9 +4,10 @@ const foodRepository = require('../repositories/food.repository');
 const restaurantRepository = require('../repositories/restaurant.repository');
 const counterRepository = require('../repositories/counter.repository');
 const { ORDER_STATUSES, PAYMENT_STATUSES, STATUS_TRANSITIONS, SOCKET_EVENTS } = require('../constants');
+const { ORDER_TRACKING_STEPS } = require('../models/Order.model');
 const { createNotification } = require('./notification.service');
 const { applyPromotion } = require('./menu.service');
-const { emitOrderEvent } = require('../sockets');
+const { emitOrderEvent, emitToUser } = require('../sockets');
 const ApiError = require('../utils/ApiError');
 
 const generateOrderCode = async () => {
@@ -91,6 +92,47 @@ const createOrder = async (customerId, data) => {
       status: ORDER_STATUSES.PENDING,
       paymentStatus: PAYMENT_STATUSES.UNPAID,
       statusHistory: [{ status: ORDER_STATUSES.PENDING, changedBy: customerId }],
+      tracking: [
+        {
+          step: 'placed',
+          label: 'Đã đặt',
+          emoji: '📝',
+          startedAt: new Date(),
+          completedAt: new Date(),
+          actorId: customerId,
+        },
+        {
+          step: 'confirmed',
+          label: 'Nhà hàng xác nhận',
+          emoji: '✅',
+          estimatedAt: new Date(Date.now() + 2 * 60 * 1000),
+        },
+        {
+          step: 'preparing',
+          label: 'Đang chuẩn bị',
+          emoji: '👨‍🍳',
+          estimatedAt: new Date(Date.now() + 15 * 60 * 1000),
+        },
+        {
+          step: 'ready',
+          label: 'Sẵn sàng giao',
+          emoji: '📦',
+          estimatedAt: new Date(Date.now() + 25 * 60 * 1000),
+        },
+        {
+          step: 'out_for_delivery',
+          label: 'Đang giao',
+          emoji: '🛵',
+          estimatedAt: new Date(Date.now() + 30 * 60 * 1000),
+        },
+        {
+          step: 'completed',
+          label: 'Hoàn tất',
+          emoji: '🎉',
+          estimatedAt: new Date(Date.now() + 45 * 60 * 1000),
+        },
+      ],
+      estimatedDelivery: new Date(Date.now() + 45 * 60 * 1000),
     });
 
     for (const item of built) {
@@ -132,9 +174,52 @@ const transitionStatus = async (orderId, newStatus, user, note) => {
   }
   order.status = newStatus;
   order.statusHistory.push({ status: newStatus, changedBy: user._id, note });
+
+  const stepMap = {
+    pending: 'placed',
+    confirmed: 'confirmed',
+    preparing: 'preparing',
+    ready: 'ready',
+    completed: 'completed',
+    cancelled: 'cancelled',
+  };
+  const stepKey = stepMap[newStatus];
+  const stepDef = ORDER_TRACKING_STEPS.find((s) => s.key === stepKey);
+  if (stepDef) {
+    const existing = (order.tracking || []).find((t) => t.step === stepKey);
+    const now = new Date();
+    if (existing) {
+      existing.completedAt = now;
+      existing.note = note || existing.note;
+      existing.actorId = user._id;
+    } else {
+      order.tracking = order.tracking || [];
+      order.tracking.push({
+        step: stepDef.key,
+        label: stepDef.label,
+        emoji: stepDef.emoji,
+        startedAt: now,
+        completedAt: now,
+        note: note || '',
+        actorId: user._id,
+      });
+    }
+  }
+  if (newStatus === 'cancelled') {
+    (order.tracking || []).forEach((t) => {
+      if (!t.completedAt) t.completedAt = now;
+    });
+  }
+
   await order.save();
   const event = SOCKET_EVENTS[newStatus] || 'order_updated';
   emitOrderEvent(order, event);
+  emitToUser(order.customerId.toString(), 'order:tracking', {
+    orderId: order._id,
+    status: order.status,
+    tracking: order.tracking,
+    estimatedDelivery: order.estimatedDelivery,
+  });
   await createNotification({
     userId: order.customerId,
     title: 'Order update',
@@ -143,6 +228,29 @@ const transitionStatus = async (orderId, newStatus, user, note) => {
     metadata: { orderId: order._id, status: newStatus },
   });
   return order;
+};
+
+const getTracking = async (orderId, user) => {
+  const order = await orderRepository.findById(orderId);
+  if (!order) throw new ApiError(404, 'Order not found');
+  const uid = user._id.toString();
+  const isCustomer = order.customerId.toString() === uid;
+  const restaurant = await require('../repositories/restaurant.repository').findById(
+    order.restaurantId
+  );
+  const isOwner = restaurant?.ownerId.toString() === uid;
+  if (!isCustomer && !isOwner && user.role !== 'admin') {
+    throw new ApiError(403, 'Forbidden');
+  }
+  const steps = order.tracking || [];
+  return {
+    orderId: order._id,
+    orderCode: order.orderCode,
+    status: order.status,
+    estimatedDelivery: order.estimatedDelivery,
+    riderInfo: order.riderInfo,
+    steps,
+  };
 };
 
 const getOrders = (filter, page = 1, limit = 20) => {
@@ -200,5 +308,6 @@ module.exports = {
   getOrders,
   getRevenueStats,
   getTopSellingFoods,
+  getTracking,
   ORDER_STATUSES,
 };

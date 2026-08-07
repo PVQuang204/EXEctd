@@ -1,13 +1,25 @@
 const mongoose = require('mongoose');
 const { RESTAURANT_STATUSES } = require('../constants');
 
+const variantSchema = new mongoose.Schema(
+  {
+    thumb: { type: String, default: null },
+    card: { type: String, default: null },
+    detail: { type: String, default: null },
+    original: { type: String, default: null },
+  },
+  { _id: false }
+);
+
 const restaurantSchema = new mongoose.Schema(
   {
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true, trim: true, maxlength: 120 },
     description: { type: String, maxlength: 1000 },
     coverImage: { type: String, default: null },
+    coverImageVariants: { type: variantSchema, default: () => ({}) },
     logo: { type: String, default: null },
+    logoVariants: { type: variantSchema, default: () => ({}) },
     location: {
       type: { type: String, enum: ['Point'], default: 'Point' },
       coordinates: { type: [Number], default: [0, 0] },

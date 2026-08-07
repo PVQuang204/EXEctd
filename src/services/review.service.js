@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const reviewRepository = require('../repositories/review.repository');
 const restaurantRepository = require('../repositories/restaurant.repository');
 const orderRepository = require('../repositories/order.repository');
-const { uploadFromBuffer } = require('./upload.service');
+const { uploadFromBuffer, extractUrl } = require('./upload.service');
 const { createNotification } = require('./notification.service');
 const { syncFoodRatingsFromReview } = require('./foodRating.service');
 const { emitToUser, emitToRestaurant } = require('../sockets');
@@ -39,7 +39,10 @@ const createReview = async (customerId, data, files = []) => {
 
   const images = [];
   for (const file of files) {
-    images.push(await uploadFromBuffer(file.buffer, 'reviews'));
+    const result = await uploadFromBuffer(file.buffer, 'reviews');
+    const url = extractUrl(result);
+    if (!url) throw new ApiError(500, 'Image upload failed');
+    images.push(url);
   }
 
   const foodIds = await resolveFoodIds({ foodId, orderId });

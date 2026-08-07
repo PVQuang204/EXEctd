@@ -3,33 +3,92 @@ const path = require('path');
 const crypto = require('crypto');
 const { cloudinary } = require('../config/cloudinary');
 const { isCloudinaryConfigured, loadEnv } = require('../config/env');
+const { processFoodImage, VARIANT_NAMES } = require('./imageProcessor.service');
 const ApiError = require('../utils/ApiError');
 
 const UPLOAD_ROOT = path.join(__dirname, '..', '..', 'uploads');
 
+const buildCloudinaryVariants = (publicId) => {
+  const base = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`;
+  const urls = {};
+  for (const v of VARIANT_NAMES) {
+    urls[v] = `${base}/f_webp,q_auto,w_auto,c_fill,g_auto/${publicId}`;
+  }
+  return urls;
+};
+
 const uploadToCloudinary = (buffer, folder) =>
   new Promise((resolve, reject) => {
+    const publicId = `${folder}/${crypto.randomUUID()}`;
     const stream = cloudinary.uploader.upload_stream(
-      { folder, resource_type: 'image' },
+      {
+        folder,
+        public_id: publicId.split('/').pop(),
+        resource_type: 'image',
+        eager: [
+          { width: 96, height: 96, crop: 'fill', format: 'webp', quality: 'auto:low' },
+          { width: 320, height: 240, crop: 'fill', format: 'webp', quality: 'auto:eco' },
+          { width: 720, crop: 'scale', format: 'webp', quality: 'auto:good' },
+          { width: 1280, crop: 'scale', format: 'webp', quality: 'auto:best' },
+        ],
+        eager_async: false,
+      },
       (error, result) => {
-        if (error) reject(new ApiError(500, error.message));
-        else resolve(result.secure_url);
+        if (error) {
+          return reject(new ApiError(500, error.message));
+        }
+        const cloudId = result.public_id;
+        const variants = {
+          thumb: result.eager?.[0]?.secure_url || result.secure_url,
+          card: result.eager?.[1]?.secure_url || result.secure_url,
+          detail: result.eager?.[2]?.secure_url || result.secure_url,
+          original: result.eager?.[3]?.secure_url || result.secure_url,
+        };
+        resolve({
+          url: result.secure_url,
+          publicId: cloudId,
+          variants,
+          meta: {
+            width: result.width,
+            height: result.height,
+            format: result.format,
+            bytes: result.bytes,
+          },
+        });
       }
     );
     stream.end(buffer);
   });
 
-const uploadToLocal = (buffer, folder) => {
+const uploadToLocal = async (buffer, folder) => {
+  const { meta, blurDataURL, variants } = await processFoodImage(buffer);
   const dir = path.join(UPLOAD_ROOT, folder);
   fs.mkdirSync(dir, { recursive: true });
-  const filename = `${crypto.randomUUID()}.jpg`;
-  fs.writeFileSync(path.join(dir, filename), buffer);
+  const id = crypto.randomUUID();
+
+  const urls = {};
+  for (const name of VARIANT_NAMES) {
+    const filename = `${id}_${name}.webp`;
+    fs.writeFileSync(path.join(dir, filename), variants[name]);
+    urls[name] = filename;
+  }
+
   loadEnv();
   const base = (process.env.API_URL || `http://localhost:${process.env.PORT || 5000}`).replace(
-    /\/$/,
+    /\/+$/,
     ''
   );
-  return `${base}/uploads/${folder}/${filename}`;
+  const absUrls = Object.fromEntries(
+    Object.entries(urls).map(([k, v]) => [k, `${base}/uploads/${folder}/${v}`])
+  );
+
+  return {
+    url: absUrls.original,
+    publicId: id,
+    variants: absUrls,
+    meta,
+    blurDataURL,
+  };
 };
 
 const uploadFromBuffer = async (buffer, folder = 'mobile-restaurant') => {
@@ -49,4 +108,20 @@ const uploadFromBuffer = async (buffer, folder = 'mobile-restaurant') => {
   return uploadToLocal(buffer, folder);
 };
 
-module.exports = { uploadFromBuffer, UPLOAD_ROOT };
+const uploadFoodImage = async (buffer, restaurantId) =>
+  uploadFromBuffer(buffer, `foods/${restaurantId}`);
+
+const extractUrl = (uploadResult) => {
+  if (!uploadResult) return null;
+  if (typeof uploadResult === 'string') return uploadResult;
+  if (typeof uploadResult === 'object' && uploadResult.url) return uploadResult.url;
+  return null;
+};
+
+module.exports = {
+  uploadFromBuffer,
+  uploadFoodImage,
+  extractUrl,
+  UPLOAD_ROOT,
+  buildCloudinaryVariants,
+};

@@ -12,4 +12,10 @@ const authLimiter = rateLimit({
   message: { success: false, message: 'Too many auth attempts' },
 });
 
-module.exports = { apiLimiter, authLimiter };
+const aiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 15,
+  message: { success: false, message: 'AI rate limit reached, slow down' },
+});
+
+module.exports = { apiLimiter, authLimiter, aiLimiter };

@@ -47,3 +47,8 @@ exports.topFoods = asyncHandler(async (req, res) => {
   const data = await orderService.getTopSellingFoods(req.params.restaurantId);
   res.json({ success: true, data });
 });
+
+exports.tracking = asyncHandler(async (req, res) => {
+  const data = await orderService.getTracking(req.params.id, req.user);
+  res.json({ success: true, data });
+});

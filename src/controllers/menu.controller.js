@@ -1,5 +1,5 @@
 const menuService = require('../services/menu.service');
-const { uploadFromBuffer } = require('../services/upload.service');
+const { uploadFoodImage, extractUrl } = require('../services/upload.service');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/ApiError');
 
@@ -15,8 +15,17 @@ exports.listCategories = asyncHandler(async (req, res) => {
 
 exports.uploadImage = asyncHandler(async (req, res) => {
   if (!req.file) throw new ApiError(400, 'No file uploaded');
-  const imageUrl = await uploadFromBuffer(req.file.buffer, 'foods');
-  res.json({ success: true, data: { image: imageUrl } });
+  const result = await uploadFoodImage(req.file.buffer, req.body.restaurantId || 'common');
+  const url = extractUrl(result);
+  if (!url) throw new ApiError(500, 'Upload failed');
+  res.json({
+    success: true,
+    data: {
+      image: url,
+      imageVariants: result.variants || null,
+      blurDataURL: result.blurDataURL || null,
+    },
+  });
 });
 
 exports.createFood = asyncHandler(async (req, res) => {

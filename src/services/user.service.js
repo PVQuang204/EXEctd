@@ -1,5 +1,5 @@
 const userRepository = require('../repositories/user.repository');
-const { uploadFromBuffer } = require('./upload.service');
+const { uploadFromBuffer, extractUrl } = require('./upload.service');
 const ApiError = require('../utils/ApiError');
 
 const getProfile = (userId) => userRepository.findById(userId);
@@ -14,8 +14,14 @@ const updateProfile = async (userId, data) => {
 };
 
 const uploadAvatar = async (userId, file) => {
-  const url = await uploadFromBuffer(file.buffer, 'avatars');
-  return userRepository.updateById(userId, { avatar: url });
+  const uploaded = await uploadFromBuffer(file.buffer, 'avatars');
+  const avatar = extractUrl(uploaded);
+  if (!avatar) throw new ApiError(500, 'Upload failed');
+  return userRepository.updateById(userId, {
+    avatar,
+    avatarVariants: uploaded?.variants || null,
+    avatarBlur: uploaded?.blurDataURL || null,
+  });
 };
 
 const listUsers = (filter, page = 1, limit = 20) => {

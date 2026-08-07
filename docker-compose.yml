@@ -43,6 +43,8 @@ services:
       PAYOS_API_KEY: ${PAYOS_API_KEY}
       PAYOS_CHECKSUM_KEY: ${PAYOS_CHECKSUM_KEY}
       PAYOS_WEBHOOK_URL: ${PAYOS_WEBHOOK_URL}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-1.5-flash}
     depends_on:
       mongodb:
         condition: service_healthy

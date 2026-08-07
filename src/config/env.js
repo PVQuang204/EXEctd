@@ -25,6 +25,14 @@ const loadEnv = () => {
   }
 };
 
+const isGeminiConfigured = () => {
+  loadEnv();
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) return false;
+  const placeholders = ['your_', 'your-', 'placeholder'];
+  return !placeholders.some((p) => key.toLowerCase().includes(p));
+};
+
 const getAccessSecret = () => {
   loadEnv();
   const secret = process.env.JWT_ACCESS_SECRET;
@@ -65,4 +73,5 @@ module.exports = {
   getRefreshSecret,
   isSmtpConfigured,
   isCloudinaryConfigured,
+  isGeminiConfigured,
 };

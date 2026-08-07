@@ -1,16 +1,33 @@
 const restaurantRepository = require('../repositories/restaurant.repository');
-const { uploadFromBuffer } = require('./upload.service');
+const { uploadFromBuffer, extractUrl } = require('./upload.service');
 const { createNotification } = require('./notification.service');
 const { RESTAURANT_STATUSES } = require('../constants');
 const ApiError = require('../utils/ApiError');
 
+const buildImagePatch = async (uploadResult) => {
+  if (!uploadResult) return {};
+  const url = extractUrl(uploadResult);
+  if (!url) throw new ApiError(500, 'Upload failed');
+  return {
+    url,
+    variants: uploadResult.variants || null,
+    blurDataURL: uploadResult.blurDataURL || null,
+  };
+};
+
 const createRestaurant = async (ownerId, data, files) => {
   const payload = { ...data, ownerId, status: RESTAURANT_STATUSES.APPROVED };
   if (files?.coverImage?.[0]) {
-    payload.coverImage = await uploadFromBuffer(files.coverImage[0].buffer, 'restaurants');
+    const result = await uploadFromBuffer(files.coverImage[0].buffer, 'restaurants');
+    const patch = await buildImagePatch(result);
+    payload.coverImage = patch.url;
+    payload.coverImageVariants = patch.variants;
   }
   if (files?.logo?.[0]) {
-    payload.logo = await uploadFromBuffer(files.logo[0].buffer, 'restaurants');
+    const result = await uploadFromBuffer(files.logo[0].buffer, 'restaurants');
+    const patch = await buildImagePatch(result);
+    payload.logo = patch.url;
+    payload.logoVariants = patch.variants;
   }
   return restaurantRepository.create(payload);
 };
@@ -22,10 +39,16 @@ const updateRestaurant = async (id, ownerId, data, files, isAdmin) => {
     throw new ApiError(403, 'Not your restaurant');
   }
   if (files?.coverImage?.[0]) {
-    data.coverImage = await uploadFromBuffer(files.coverImage[0].buffer, 'restaurants');
+    const result = await uploadFromBuffer(files.coverImage[0].buffer, 'restaurants');
+    const patch = await buildImagePatch(result);
+    data.coverImage = patch.url;
+    data.coverImageVariants = patch.variants;
   }
   if (files?.logo?.[0]) {
-    data.logo = await uploadFromBuffer(files.logo[0].buffer, 'restaurants');
+    const result = await uploadFromBuffer(files.logo[0].buffer, 'restaurants');
+    const patch = await buildImagePatch(result);
+    data.logo = patch.url;
+    data.logoVariants = patch.variants;
   }
   return restaurantRepository.updateById(id, data);
 };

@@ -3,7 +3,7 @@ const foodRepository = require('../repositories/food.repository');
 const comboRepository = require('../repositories/combo.repository');
 const promotionRepository = require('../repositories/promotion.repository');
 const restaurantRepository = require('../repositories/restaurant.repository');
-const { uploadFromBuffer } = require('./upload.service');
+const { uploadFoodImage } = require('./upload.service');
 const ApiError = require('../utils/ApiError');
 
 const assertOwner = async (restaurantId, ownerId) => {
@@ -43,7 +43,12 @@ const deleteCategory = async (ownerId, restaurantId, categoryId) => {
 // Foods
 const createFood = async (ownerId, data, file) => {
   await assertOwner(data.restaurantId, ownerId);
-  if (file) data.image = await uploadFromBuffer(file.buffer, 'foods');
+  if (file) {
+    const uploaded = await uploadFoodImage(file.buffer, data.restaurantId);
+    data.image = uploaded.url;
+    data.images = [uploaded];
+    data.imageBlur = uploaded.blurDataURL;
+  }
   if (data.stock == null) data.stock = 999; // default unlimited stock
   return foodRepository.create(data);
 };
@@ -52,7 +57,12 @@ const updateFood = async (ownerId, id, data, file) => {
   const food = await foodRepository.findById(id);
   if (!food) throw new ApiError(404, 'Food not found');
   await assertOwner(food.restaurantId, ownerId);
-  if (file) data.image = await uploadFromBuffer(file.buffer, 'foods');
+  if (file) {
+    const uploaded = await uploadFoodImage(file.buffer, food.restaurantId.toString());
+    data.image = uploaded.url;
+    data.images = [uploaded];
+    data.imageBlur = uploaded.blurDataURL;
+  }
   return foodRepository.updateById(id, data);
 };
 
@@ -84,7 +94,12 @@ const getComboById = async (id) => {
 // Combos
 const createCombo = async (ownerId, data, file) => {
   await assertOwner(data.restaurantId, ownerId);
-  if (file) data.image = await uploadFromBuffer(file.buffer, 'combos');
+  if (file) {
+    const uploaded = await uploadFoodImage(file.buffer, data.restaurantId);
+    data.image = uploaded.url;
+    data.images = [uploaded];
+    data.imageBlur = uploaded.blurDataURL;
+  }
   return comboRepository.create(data);
 };
 
@@ -92,7 +107,12 @@ const updateCombo = async (ownerId, id, data, file) => {
   const combo = await comboRepository.findById(id);
   if (!combo) throw new ApiError(404, 'Combo not found');
   await assertOwner(combo.restaurantId, ownerId);
-  if (file) data.image = await uploadFromBuffer(file.buffer, 'combos');
+  if (file) {
+    const uploaded = await uploadFoodImage(file.buffer, combo.restaurantId.toString());
+    data.image = uploaded.url;
+    data.images = [uploaded];
+    data.imageBlur = uploaded.blurDataURL;
+  }
   return comboRepository.updateById(id, data);
 };
 

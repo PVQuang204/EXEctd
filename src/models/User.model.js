@@ -18,6 +18,13 @@ const userSchema = new mongoose.Schema(
     phone: { type: String, trim: true },
     role: { type: String, enum: Object.values(ROLES), default: ROLES.CUSTOMER },
     avatar: { type: String, default: null },
+    avatarVariants: {
+      thumb: { type: String, default: null },
+      card: { type: String, default: null },
+      detail: { type: String, default: null },
+      original: { type: String, default: null },
+    },
+    avatarBlur: { type: String, default: null },
     refreshToken: { type: String, select: false },
     status: { type: String, enum: Object.values(USER_STATUSES), default: USER_STATUSES.ACTIVE },
     resetPasswordToken: { type: String, select: false },

@@ -10,6 +10,7 @@ router.use(authMiddleware);
 router.post('/', roleMiddleware('customer'), orderController.create);
 router.get('/my', roleMiddleware('customer'), orderController.myOrders);
 router.get('/restaurant', roleMiddleware('restaurant_owner'), orderController.restaurantOrders);
+router.get('/:id/tracking', orderController.tracking);
 router.patch('/:id/status', roleMiddleware('restaurant_owner', 'admin'), orderController.updateStatus);
 router.get('/stats/revenue', roleMiddleware('restaurant_owner'), orderController.revenue);
 router.get('/stats/top-foods/:restaurantId', roleMiddleware('restaurant_owner'), orderController.topFoods);

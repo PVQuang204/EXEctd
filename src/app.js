@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const compression = require('compression');
 const { loadEnv } = require('./config/env');
 
 loadEnv();
@@ -12,6 +13,7 @@ const swaggerSpec = require('./config/swagger');
 const routes = require('./routes');
 const errorHandler = require('./middleware/errorHandler.middleware');
 const { apiLimiter } = require('./middleware/rateLimiter.middleware');
+const mobilePayload = require('./middleware/mobilePayload.middleware');
 const { configureCloudinary } = require('./config/cloudinary');
 const { requestLogger } = require('./middleware/requestLogger.middleware');
 
@@ -49,6 +51,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(apiLimiter);
+app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(mongoSanitize());
@@ -56,9 +59,14 @@ app.use(xss());
 
 app.use(
   '/uploads',
-  express.static(path.join(__dirname, '..', 'uploads'), {
-    maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
-  })
+  (req, res, next) => {
+    res.setHeader(
+      'Cache-Control',
+      process.env.NODE_ENV === 'production' ? 'public, max-age=604800, immutable' : 'no-store'
+    );
+    next();
+  },
+  express.static(path.join(__dirname, '..', 'uploads'))
 );
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
@@ -67,6 +75,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 }));
 
 app.use('/api', routes);
+app.use(mobilePayload);
 
 app.use((req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
