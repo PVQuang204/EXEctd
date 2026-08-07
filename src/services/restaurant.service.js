@@ -105,6 +105,28 @@ const getById = async (id) => {
   return r;
 };
 
+const getAllRestaurants = async ({ page = 1, limit = 20, status, search }) => {
+  const filter = {};
+  if (status) filter.status = status;
+  if (search) {
+    filter.$or = [
+      { name: { $regex: search, $options: 'i' } },
+      { address: { $regex: search, $options: 'i' } },
+    ];
+  }
+  const skip = (page - 1) * limit;
+  const [restaurants, total] = await Promise.all([
+    restaurantRepository.find(filter, {
+      sort: { createdAt: -1 },
+      skip,
+      limit,
+      populate: { path: 'ownerId', select: 'fullName email phone' },
+    }),
+    restaurantRepository.count(filter),
+  ]);
+  return { restaurants, pagination: { page: Number(page), limit: Number(limit), total, pages: Math.ceil(total / limit) } };
+};
+
 module.exports = {
   createRestaurant,
   updateRestaurant,
@@ -114,4 +136,5 @@ module.exports = {
   rejectRestaurant,
   getOwnerRestaurants,
   getById,
+  getAllRestaurants,
 };

@@ -52,3 +52,13 @@ exports.tracking = asyncHandler(async (req, res) => {
   const data = await orderService.getTracking(req.params.id, req.user);
   res.json({ success: true, data });
 });
+
+exports.adminOrders = asyncHandler(async (req, res) => {
+  const data = await orderService.getAllOrders(req.query);
+  res.json({ success: true, data });
+});
+
+exports.adminRevenueByRestaurant = asyncHandler(async (req, res) => {
+  const data = await orderService.getRevenueByRestaurant(req.query);
+  res.json({ success: true, data });
+});

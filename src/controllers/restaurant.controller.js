@@ -48,3 +48,8 @@ exports.reject = asyncHandler(async (req, res) => {
   const data = await restaurantService.rejectRestaurant(req.params.id);
   res.json({ success: true, data });
 });
+
+exports.adminList = asyncHandler(async (req, res) => {
+  const data = await restaurantService.getAllRestaurants(req.query);
+  res.json({ success: true, data });
+});

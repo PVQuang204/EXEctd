@@ -106,4 +106,29 @@ const listReviews = (restaurantId, page = 1, limit = 20) => {
   );
 };
 
-module.exports = { createReview, listReviews };
+const listAllReviews = async ({ page = 1, limit = 20, restaurantId, rating, startDate, endDate }) => {
+  const filter = {};
+  if (restaurantId) filter.restaurantId = new mongoose.Types.ObjectId(restaurantId);
+  if (rating) filter.rating = Number(rating);
+  if (startDate || endDate) {
+    filter.createdAt = {};
+    if (startDate) filter.createdAt.$gte = new Date(startDate);
+    if (endDate) filter.createdAt.$lte = new Date(endDate);
+  }
+  const skip = (page - 1) * limit;
+  const [reviews, total] = await Promise.all([
+    reviewRepository.find(filter, {
+      sort: { createdAt: -1 },
+      skip,
+      limit,
+      populate: [
+        { path: 'customerId', select: 'fullName avatar' },
+        { path: 'restaurantId', select: 'name' },
+      ],
+    }),
+    reviewRepository.count(filter),
+  ]);
+  return { reviews, pagination: { page: Number(page), limit: Number(limit), total, pages: Math.ceil(total / limit) } };
+};
+
+module.exports = { createReview, listReviews, listAllReviews };

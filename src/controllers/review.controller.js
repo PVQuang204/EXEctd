@@ -15,3 +15,8 @@ exports.list = asyncHandler(async (req, res) => {
   );
   res.json({ success: true, data });
 });
+
+exports.adminList = asyncHandler(async (req, res) => {
+  const data = await reviewService.listAllReviews(req.query);
+  res.json({ success: true, data });
+});

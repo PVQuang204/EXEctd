@@ -266,25 +266,6 @@ const getOrders = (filter, page = 1, limit = 20) => {
   });
 };
 
-const getRevenueStats = async (restaurantId, startDate, endDate) => {
-  if (!restaurantId) throw new ApiError(400, 'restaurantId is required');
-  const start = startDate ? new Date(startDate) : new Date(0);
-  const end = endDate ? new Date(endDate) : new Date();
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-    throw new ApiError(400, 'Invalid date format');
-  }
-  const match = {
-    restaurantId: new mongoose.Types.ObjectId(restaurantId),
-    status: ORDER_STATUSES.READY,
-    createdAt: { $gte: start, $lte: end },
-  };
-  const [result] = await orderRepository.aggregate([
-    { $match: match },
-    { $group: { _id: null, totalRevenue: { $sum: '$totalAmount' }, orderCount: { $sum: 1 } } },
-  ]);
-  return result || { totalRevenue: 0, orderCount: 0 };
-};
-
 const getTopSellingFoods = async (restaurantId, limit = 10) => {
   return orderRepository.aggregate([
     { $match: { restaurantId: new mongoose.Types.ObjectId(restaurantId), status: ORDER_STATUSES.READY } },
@@ -302,6 +283,88 @@ const getTopSellingFoods = async (restaurantId, limit = 10) => {
   ]);
 };
 
+const getAllOrders = async ({ page = 1, limit = 20, status, restaurantId, startDate, endDate }) => {
+  const filter = {};
+  if (status) filter.status = status;
+  if (restaurantId) filter.restaurantId = new mongoose.Types.ObjectId(restaurantId);
+  if (startDate || endDate) {
+    filter.createdAt = {};
+    if (startDate) filter.createdAt.$gte = new Date(startDate);
+    if (endDate) filter.createdAt.$lte = new Date(endDate);
+  }
+  const skip = (page - 1) * limit;
+  const [orders, total] = await Promise.all([
+    orderRepository.find(filter, {
+      sort: { createdAt: -1 },
+      skip,
+      limit,
+      populate: [
+        { path: 'customerId', select: 'fullName phone' },
+        { path: 'restaurantId', select: 'name ownerId' },
+      ],
+    }),
+    orderRepository.count(filter),
+  ]);
+  return { orders, pagination: { page: Number(page), limit: Number(limit), total, pages: Math.ceil(total / limit) } };
+};
+
+const getRevenueStats = async (restaurantId, startDate, endDate) => {
+  const start = startDate ? new Date(startDate) : new Date(0);
+  const end = endDate ? new Date(endDate) : new Date();
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    throw new ApiError(400, 'Invalid date format');
+  }
+  const match = {
+    status: ORDER_STATUSES.READY,
+    createdAt: { $gte: start, $lte: end },
+  };
+  if (restaurantId) {
+    match.restaurantId = new mongoose.Types.ObjectId(restaurantId);
+  }
+  const [result] = await orderRepository.aggregate([
+    { $match: match },
+    { $group: { _id: null, totalRevenue: { $sum: '$totalAmount' }, orderCount: { $sum: 1 } } },
+  ]);
+  return result || { totalRevenue: 0, orderCount: 0 };
+};
+
+const getRevenueByRestaurant = async ({ startDate, endDate }) => {
+  const start = startDate ? new Date(startDate) : new Date(0);
+  const end = endDate ? new Date(endDate) : new Date();
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    throw new ApiError(400, 'Invalid date format');
+  }
+  const results = await orderRepository.aggregate([
+    { $match: { status: ORDER_STATUSES.READY, createdAt: { $gte: start, $lte: end } } },
+    {
+      $group: {
+        _id: '$restaurantId',
+        totalRevenue: { $sum: '$totalAmount' },
+        orderCount: { $sum: 1 },
+      },
+    },
+    { $sort: { totalRevenue: -1 } },
+    {
+      $lookup: {
+        from: 'restaurants',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'restaurant',
+      },
+    },
+    { $unwind: { path: '$restaurant', preserveNullAndEmptyArrays: true } },
+    {
+      $project: {
+        restaurantId: '$_id',
+        name: '$restaurant.name',
+        totalRevenue: 1,
+        orderCount: 1,
+      },
+    },
+  ]);
+  return results;
+};
+
 module.exports = {
   createOrder,
   transitionStatus,
@@ -309,5 +372,7 @@ module.exports = {
   getRevenueStats,
   getTopSellingFoods,
   getTracking,
+  getAllOrders,
+  getRevenueByRestaurant,
   ORDER_STATUSES,
 };

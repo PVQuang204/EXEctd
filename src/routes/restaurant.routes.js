@@ -26,5 +26,6 @@ router.put(
 router.patch('/:id/location', roleMiddleware('restaurant_owner'), restaurantController.updateLocation);
 router.patch('/:id/approve', roleMiddleware('admin'), restaurantController.approve);
 router.patch('/:id/reject', roleMiddleware('admin'), restaurantController.reject);
+router.get('/admin/all', roleMiddleware('admin'), restaurantController.adminList);
 
 module.exports = router;

@@ -11,4 +11,6 @@ router.get('/:restaurantId', reviewController.list);
 router.use(authMiddleware, roleMiddleware('customer'));
 router.post('/', upload.array('images', 5), reviewController.create);
 
+router.get('/admin/all', authMiddleware, roleMiddleware('admin'), reviewController.adminList);
+
 module.exports = router;
