@@ -35,6 +35,8 @@ tags:
   - name: Reviews
   - name: Notifications
   - name: Dashboard
+  - name: Chat
+  - name: AI
 
 components:
   securitySchemes:
@@ -292,6 +294,226 @@ components:
               type: array
             topRestaurants:
               type: array
+
+    ImageUploadResponse:
+      type: object
+      properties:
+        image:
+          type: string
+          description: URL ảnh gốc
+          nullable: true
+        imageVariants:
+          type: object
+          properties:
+            thumb:
+              type: string
+            card:
+              type: string
+            detail:
+              type: string
+            original:
+              type: string
+        blurDataURL:
+          type: string
+          nullable: true
+          description: Blur placeholder (data URI base64 WebP)
+
+    Conversation:
+      type: object
+      properties:
+        _id:
+          type: string
+        restaurantId:
+          type: string
+        customerId:
+          type: object
+          properties:
+            _id:
+              type: string
+            fullName:
+              type: string
+            avatar:
+              type: string
+              nullable: true
+        ownerId:
+          type: object
+        lastMessageText:
+          type: string
+        customerUnread:
+          type: integer
+        ownerUnread:
+          type: integer
+        status:
+          type: string
+          enum: [open, closed]
+        lastMessageAt:
+          type: string
+          format: date-time
+
+    Message:
+      type: object
+      properties:
+        _id:
+          type: string
+        conversationId:
+          type: string
+        senderId:
+          type: object
+        senderRole:
+          type: string
+          enum: [customer, restaurant_owner, admin, system]
+        type:
+          type: string
+          enum: [text, image, system]
+        text:
+          type: string
+        image:
+          type: string
+          nullable: true
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    AISuggestInput:
+      type: object
+      required: [budget, people, restaurantId]
+      properties:
+        budget:
+          type: integer
+          description: Ngân sách (VND)
+          example: 200000
+        people:
+          type: integer
+          description: Số người ăn
+          example: 2
+        restaurantId:
+          type: string
+          description: ID nhà hàng để lấy menu
+        tags:
+          type: array
+          items:
+            type: string
+        preferences:
+          type: string
+          description: "Ưu tiên khách: vd 'nhiều rau', 'không hải sản'"
+
+    AISuggestResponse:
+      type: object
+      properties:
+        source:
+          type: string
+          enum: [gemini, rule-based]
+        summary:
+          type: string
+          description: Tóm tắt bằng tiếng Việt
+        groups:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+                enum: [Tiết kiệm, Cân bằng, Đầy đặn]
+              estimatedTotal:
+                type: integer
+              itemIds:
+                type: array
+                items:
+                  type: string
+              reason:
+                type: string
+        upsell:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              estimatedPrice:
+                type: integer
+              reason:
+                type: string
+
+    AIChatInput:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          description: Tin nhắn khách hỏi
+        restaurantId:
+          type: string
+        history:
+          type: array
+          items:
+            type: object
+            properties:
+              role:
+                type: string
+                enum: [user, assistant]
+              content:
+                type: string
+
+    AIChatResponse:
+      type: object
+      properties:
+        source:
+          type: string
+          enum: [gemini, rule-based]
+        reply:
+          type: string
+          description: Câu trả lời AI
+
+    OrderTrackingResponse:
+      type: object
+      properties:
+        orderId:
+          type: string
+        orderCode:
+          type: string
+        status:
+          type: string
+        estimatedDelivery:
+          type: string
+          format: date-time
+          nullable: true
+        riderInfo:
+          type: object
+          properties:
+            name:
+              type: string
+              nullable: true
+            phone:
+              type: string
+              nullable: true
+        steps:
+          type: array
+          items:
+            type: object
+            properties:
+              step:
+                type: string
+                enum: [placed, confirmed, preparing, ready, out_for_delivery, completed, cancelled]
+              label:
+                type: string
+              emoji:
+                type: string
+              startedAt:
+                type: string
+                format: date-time
+              completedAt:
+                type: string
+                format: date-time
+                nullable: true
+              estimatedAt:
+                type: string
+                format: date-time
+                nullable: true
+              note:
+                type: string
+                nullable: true
 
 paths:
   /api/health:
@@ -1257,6 +1479,299 @@ paths:
       responses:
         '200':
           description: OK
+
+  /api/menu/upload:
+    post:
+      tags: [Menu]
+      summary: Upload ảnh đơn lẻ (owner)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                restaurantId:
+                  type: string
+                  description: "Tùy chọn — folder upload (nếu không truyền dùng 'common')"
+                image:
+                  type: string
+                  format: binary
+                  description: File ảnh (JPEG, PNG, WebP, JPG — max 5MB)
+      responses:
+        '200':
+          description: "Trả về { image, imageVariants: {thumb,card,detail,original}, blurDataURL }"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ImageUploadResponse'
+        '400':
+          description: File rỗng / không đúng định dạng
+        '401':
+          description: Chưa đăng nhập
+
+  /api/chat/conversations:
+    get:
+      tags: [Chat]
+      summary: Danh sách cuộc hội thoại của tôi
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK — trả mảng Conversation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Conversation'
+
+  /api/chat/conversations/{restaurantId}:
+    post:
+      tags: [Chat]
+      summary: Mở/lấy cuộc hội thoại với nhà hàng (customer)
+      description: "Nếu chưa có → tạo mới. Chỉ customer được gọi."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: restaurantId
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Tạo hoặc trả cuộc hội thoại hiện tại
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Conversation'
+        '400':
+          description: Nhà hàng không tồn tại / không khả dụng
+        '403':
+          description: Chỉ customer được mở hội thoại
+
+  /api/chat/conversations/{id}/messages:
+    get:
+      tags: [Chat]
+      summary: Tin nhắn trong cuộc hội thoại (phân trang, mới nhất trước)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: before
+          schema:
+            type: string
+            format: date-time
+          description: "Load tin nhắn cũ hơn thời điểm này (ISO 8601)"
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 30
+            maximum: 100
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Message'
+        '403':
+          description: Không phải người tham gia cuộc hội thoại
+    post:
+      tags: [Chat]
+      summary: Gửi tin nhắn
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  maxLength: 2000
+                image:
+                  type: string
+                  description: URL ảnh đã upload sẵn
+      responses:
+        '201':
+          description: Tin nhắn đã gửi — emit realtime qua Socket.IO
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Message'
+        '400':
+          description: Không có text và image
+        '403':
+          description: Cuộc hội thoại đã đóng / không phải người tham gia
+
+  /api/chat/conversations/{id}/read:
+    post:
+      tags: [Chat]
+      summary: Đánh dấu đã đọc
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /api/chat/conversations/{id}/close:
+    post:
+      tags: [Chat]
+      summary: Đóng cuộc hội thoại
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Đã đóng
+
+  /api/ai/suggest:
+    post:
+      tags: [AI]
+      summary: Gợi ý menu theo ngân sách (AI)
+      description: |
+        Dùng Google Gemini nếu có GEMINI_API_KEY, tự động fallback sang rule-based.
+        Trả về 3 nhóm: Tiết kiệm / Cân bằng / Đầy đặn + gợi ý upsell (ráp, nước, bắp rang...).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AISuggestInput'
+      responses:
+        '200':
+          description: Gợi ý thành công
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AISuggestResponse'
+        '400':
+          description: Thiếu budget/people/restaurantId
+
+  /api/ai/chat:
+    post:
+      tags: [AI]
+      summary: Hỏi đáp về menu (AI)
+      description: |
+        Chat tự do với AI về menu nhà hàng. Dùng Gemini nếu có key.
+        Fallback trả lời rule-based.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIChatInput'
+      responses:
+        '200':
+          description: Câu trả lời AI
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AIChatResponse'
+        '400':
+          description: Thiếu message
+
+  /api/orders/{id}/tracking:
+    get:
+      tags: [Orders]
+      summary: Chi tiết tracking đơn hàng
+      description: |
+        Trả về timeline 6 bước với emoji + ETA + thông tin rider.
+        Ai được xem: customer (chủ đơn), owner (chủ nhà hàng), admin.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/OrderTrackingResponse'
+        '403':
+          description: Không phải customer/order owner / nhà hàng owner / admin
+        '404':
+          description: Order không tồn tại
 
   /api/dashboard/admin:
     get:
