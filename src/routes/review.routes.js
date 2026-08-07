@@ -6,11 +6,13 @@ const upload = require('../middleware/upload.middleware');
 
 const router = express.Router();
 
+// Public: list reviews for a restaurant
 router.get('/:restaurantId', reviewController.list);
 
-router.use(authMiddleware, roleMiddleware('customer'));
-router.post('/', upload.array('images', 5), reviewController.create);
+// Customer: create review
+router.post('/', authMiddleware, roleMiddleware('customer'), upload.array('images', 5), reviewController.create);
 
+// Admin: list all reviews
 router.get('/admin/all', authMiddleware, roleMiddleware('admin'), reviewController.adminList);
 
 module.exports = router;
