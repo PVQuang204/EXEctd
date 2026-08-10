@@ -4,8 +4,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
-# Update npm to latest to fix npm ci compatibility issues
-RUN npm install -g npm@latest
+# Install npm 10 (compatible with Node 20, fixes EBADENGINE)
+RUN npm install -g npm@10
 
 RUN npm ci --omit=dev --legacy-peer-deps
 
