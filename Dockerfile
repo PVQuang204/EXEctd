@@ -3,7 +3,11 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+
+# Update npm to latest to fix npm ci compatibility issues
+RUN npm install -g npm@latest
+
+RUN npm ci --omit=dev --legacy-peer-deps
 
 COPY . .
 
