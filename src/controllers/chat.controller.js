@@ -34,3 +34,8 @@ exports.close = asyncHandler(async (req, res) => {
   const data = await chatService.closeConversation(req.user, req.params.id);
   res.json({ success: true, data });
 });
+
+exports.deleteMessage = asyncHandler(async (req, res) => {
+  const data = await chatService.deleteMessage(req.user, req.params.id, req.params.messageId);
+  res.json({ success: true, data });
+});

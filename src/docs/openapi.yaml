@@ -1681,6 +1681,44 @@ paths:
         '200':
           description: Đã đóng
 
+  /api/chat/conversations/{id}/messages/{messageId}:
+    delete:
+      tags: [Chat]
+      summary: Xóa mềm một tin nhắn (chỉ người gửi hoặc admin)
+      description: |
+        Soft-delete — tin nhắn chỉ bị ẩn với người xóa (`deletedFor` chứa userId).
+        Người còn lại vẫn thấy bình thường. Tin nhắn sẽ bị loại khỏi `listMessages`
+        của người xóa.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Message'
+        '403':
+          description: Không phải người gửi và không phải admin
+        '404':
+          description: Không tìm thấy tin nhắn
+
   /api/ai/suggest:
     post:
       tags: [AI]

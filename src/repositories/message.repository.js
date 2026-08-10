@@ -6,8 +6,11 @@ class MessageRepository extends BaseRepository {
     super(Message);
   }
 
-  listByConversation(conversationId, { skip = 0, limit = 30, before } = {}) {
-    const filter = { conversationId };
+  listByConversation(conversationId, viewerId, { skip = 0, limit = 30, before } = {}) {
+    const filter = {
+      conversationId,
+      deletedFor: { $ne: viewerId },
+    };
     if (before) filter.createdAt = { $lt: before };
     return Message.find(filter)
       .sort({ createdAt: -1 })
@@ -20,6 +23,14 @@ class MessageRepository extends BaseRepository {
     return Message.updateMany(
       { conversationId, senderId: { $ne: readerId }, isRead: false },
       { $set: { isRead: true, readAt: new Date() } }
+    );
+  }
+
+  softDeleteForUser(messageId, userId) {
+    return Message.findByIdAndUpdate(
+      messageId,
+      { $addToSet: { deletedFor: userId } },
+      { new: true }
     );
   }
 }
