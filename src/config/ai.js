@@ -23,6 +23,7 @@ const getClient = () => {
   client = new OpenAI({
     apiKey,
     baseURL: 'https://api.groq.com/openai/v1',
+    timeout: 10 * 1000, // 10s — fail fast thay vì treo request
   });
   return client;
 };

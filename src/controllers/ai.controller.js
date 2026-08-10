@@ -4,11 +4,16 @@ const ApiError = require('../utils/ApiError');
 
 exports.suggest = asyncHandler(async (req, res) => {
   const { budget, people, tags, preferences, restaurantId } = req.body || {};
+  const numBudget = Number(budget);
+  const numPeople = Number(people);
+  if (!Number.isFinite(numBudget) || !Number.isFinite(numPeople)) {
+    throw new ApiError(400, 'budget and people must be numbers');
+  }
   const data = await aiService.suggestByBudget({
-    budget: Number(budget),
-    people: Number(people),
-    tags,
-    preferences,
+    budget: numBudget,
+    people: numPeople,
+    tags: Array.isArray(tags) ? tags.slice(0, 10) : undefined,
+    preferences: Array.isArray(preferences) ? preferences.slice(0, 10) : undefined,
     restaurantId,
   });
   res.json({ success: true, data });
@@ -16,7 +21,9 @@ exports.suggest = asyncHandler(async (req, res) => {
 
 exports.chat = asyncHandler(async (req, res) => {
   const { message, restaurantId, history } = req.body || {};
-  if (!message) throw new ApiError(400, 'message is required');
+  if (!message || typeof message !== 'string') {
+    throw new ApiError(400, 'message is required');
+  }
   const data = await aiService.chatAboutMenu({
     userMessage: message,
     restaurantId,
