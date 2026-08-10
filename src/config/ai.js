@@ -39,29 +39,21 @@ const generateMenuSuggestions = async ({ budget, people, tags, preferences, menu
   const openai = getClient();
   if (!openai) return null;
 
-  const prompt = `Bạn là trợ lý gợi ý món ăn tiếng Việt cho ứng dụng nhà hàng.
-Khách hàng: ${budget.toLocaleString()} VND cho ${people} người.
-Sở thích: ${preferences ? preferences.join(', ') : 'không có'}.
-Tags yêu thích: ${tags ? tags.join(', ') : 'không có'}.
-Menu (chỉ chọn từ đây):
+  const prompt = `Bạn là trợ lý gợi ý món ăn cho nhà hàng.
+Ngân sách: ${budget.toLocaleString()} VND cho ${people} người (tức ${(budget / people).toLocaleString()} VND/người).
+Sở thích khách: ${preferences ? preferences.join(', ') : 'không có'}.
+Tags ưu tiên: ${tags ? tags.join(', ') : 'không có'}.
+Menu (CHỈ chọn từ các id bên dưới):
 ${buildMenuContext(menuContext)}
 
-Trả về JSON theo đúng schema:
-{
-  "summary": "1 câu tiếng Việt thân thiện mô tả gợi ý",
-  "groups": [
-    {
-      "label": "Tiết kiệm" | "Cân bằng" | "Đầy đặn",
-      "estimatedTotal": number,
-      "itemIds": ["id1", "id2"],
-      "reason": "Lý do bằng tiếng Việt"
-    }
-  ],
-  "upsell": [
-    { "name": "string", "estimatedPrice": number, "reason": "string" }
-  ]
-}
-Quan trọng: Tổng giá phải trong ngân sách. Chỉ dùng itemIds từ menu.`;
+QUY TẮC BẮT BUỘC:
+- Tổng giá TẤT CẢ các món trong mỗi group phải <= ${budget.toLocaleString()} VND (không được vượt ngân sách).
+- Chỉ dùng itemIds từ menu trên, không bịa thêm.
+- Nếu budget nhỏ (<=50k/người) → chỉ cần 1 group "Tiết kiệm".
+- Nếu budget lớn (>=150k/người) → có thể 2-3 groups.
+
+Trả JSON thuần, không markdown:
+{"summary":"...","groups":[{"label":"Tiết kiệm","estimatedTotal":50000,"itemIds":["id1"],"reason":"..."}],"upsell":[]}`;
 
   try {
     const result = await openai.chat.completions.create({

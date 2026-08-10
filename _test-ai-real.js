@@ -78,7 +78,7 @@ async function test(path, opts) {
   console.log('═══════════════════════════════════════════════════');
   const src1 = ai1.body?.data?.source;
   const src2 = ai2.body?.data?.source;
-  if (src1 === 'gemini' && src2 === 'gemini') {
+  if (src1 === 'groq' && src2 === 'groq') {
     console.log('  ✅ AI liên kết với Groq thực sự');
     console.log('  ✅ /ai/suggest → source: groq');
     console.log('  ✅ /ai/chat → source: groq');
