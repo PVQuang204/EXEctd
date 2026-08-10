@@ -77,19 +77,21 @@ const ruleBasedSuggestion = ({ budget, people, menuContext }) => {
 
   const groups = tiers
     .map(({ label, ratio }) => {
+      // target = tổng tiền cho 1 người (không nhân people)
       const target = Math.max(0, Math.round((budget * ratio) / people));
       const picked = [];
       let total = 0;
       for (const food of available) {
         if (picked.length >= Math.max(2, Math.ceil(people * 1.5))) break;
-        if (total + food.price > target * people) continue;
+        // So sánh tổng phần ăn với target/người (không nhân people)
+        if (total + food.price > target) continue;
         picked.push(food);
         total += food.price;
       }
       if (picked.length === 0) return null;
       return {
         label,
-        estimatedTotal: total * people,
+        estimatedTotal: total * people, // = tổng cho cả nhóm
         itemIds: picked.map((f) => (f.id || f._id).toString()),
         reason: `Khoảng ${Math.round(ratio * 100)}% ngân sách, ${picked.length} món cho ${people} người`,
       };
