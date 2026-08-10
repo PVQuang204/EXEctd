@@ -1,6 +1,6 @@
 const foodRepository = require('../repositories/food.repository');
 const comboRepository = require('../repositories/combo.repository');
-const { generateMenuSuggestions } = require('../config/gemini');
+const { generateMenuSuggestions, chatAboutMenu: groqChat } = require('../config/ai');
 const ApiError = require('../utils/ApiError');
 
 const KNOWN_UPSELLS = [
@@ -35,7 +35,7 @@ const ruleBasedSuggestion = ({ budget, people, menuContext }) => {
   const available = menuContext.filter((f) => f.isAvailable && f.price > 0);
   if (available.length === 0) {
     return {
-      summary: `Với ngân sách ${budget} VND cho ${people} người, mình chưa tìm được món phù hợp trong menu.`,
+      summary: `Với ngân sách ${budget.toLocaleString()} VND cho ${people} người, mình chưa tìm được món phù hợp trong menu.`,
       groups: [],
       upsell: suggestUpsell(budget),
     };
@@ -57,7 +57,7 @@ const ruleBasedSuggestion = ({ budget, people, menuContext }) => {
         label,
         estimatedTotal: total * people,
         itemIds: picked.map((f) => (f.id || f._id).toString()),
-        reason: `Khoảng ${ratio * 100}% ngân sách, ${picked.length} món cho ${people} người`,
+        reason: `Khoảng ${Math.round(ratio * 100)}% ngân sách, ${picked.length} món cho ${people} người`,
       };
     })
     .filter(Boolean);
@@ -82,10 +82,7 @@ const suggestByBudget = async ({ budget, people, tags, restaurantId, preferences
   if (!menu.length) {
     menu = await foodRepository.find({ isAvailable: true });
   }
-  const combos = await comboRepository.find({
-    restaurantId,
-    isActive: true,
-  }).catch(() => []);
+  const combos = await comboRepository.find({ restaurantId, isActive: true }).catch(() => []);
 
   const menuContext = [...menu, ...combos].map((m) => ({
     id: m._id,
@@ -95,52 +92,41 @@ const suggestByBudget = async ({ budget, people, tags, restaurantId, preferences
     isAvailable: m.isAvailable !== false && m.isActive !== false,
   }));
 
-  const aiResult = await generateMenuSuggestions({
-    budget,
-    people,
-    tags,
-    preferences,
-    menuContext,
-  });
+  // Try Groq AI first
+  const aiResult = await generateMenuSuggestions({ budget, people, tags, preferences, menuContext });
   if (aiResult && Array.isArray(aiResult.groups) && aiResult.groups.length) {
-    return { source: 'gemini', ...aiResult, upsell: aiResult.upsell || suggestUpsell(budget) };
+    return {
+      source: 'groq',
+      ...aiResult,
+      upsell: aiResult.upsell || suggestUpsell(budget),
+    };
   }
 
+  // Fallback to rule-based
   const fallback = ruleBasedSuggestion({ budget, people, menuContext });
   return { source: 'rule-based', ...fallback };
 };
 
 const chatAboutMenu = async ({ userMessage, history = [], restaurantId }) => {
-  const gemini = require('../config/gemini').getModel();
-  if (!gemini) {
-    return {
-      source: 'rule-based',
-      reply:
-        'Mình sẵn sàng gợi ý món theo ngân sách. Bạn thử gọi /api/ai/suggest với ngân sách và số người nhé.',
-    };
-  }
-  let menu = await foodRepository.find({ restaurantId, isAvailable: true });
-  const simplified = menu.slice(0, 40).map((f) => ({
+  // Build menu context
+  const menu = await foodRepository.find({ restaurantId, isAvailable: true }).catch(() => []);
+  const menuItems = menu.map((f) => ({
     name: f.name,
     price: f.price,
     tags: f.tags || [],
   }));
 
-  const prompt = `You are a friendly Vietnamese menu assistant. Use the menu below when relevant.\nMenu:\n${JSON.stringify(
-    simplified
-  )}\n\nConversation:\n${history
-    .map((h) => `${h.role}: ${h.content}`)
-    .join('\n')}\nuser: ${userMessage}\nassistant:`;
-
-  try {
-    const result = await gemini.generateContent(prompt);
-    return { source: 'gemini', reply: result.response.text().trim() };
-  } catch {
-    return {
-      source: 'rule-based',
-      reply: 'Xin lỗi, mình đang bận. Thử lại sau nhé.',
-    };
+  // Try Groq AI
+  const reply = await groqChat({ userMessage, history, menuItems });
+  if (reply) {
+    return { source: 'groq', reply };
   }
+
+  // Fallback
+  return {
+    source: 'rule-based',
+    reply: 'Mình sẵn sàng gợi ý món theo ngân sách. Bạn thử gọi /api/ai/suggest với ngân sách và số người nhé.',
+  };
 };
 
 module.exports = {
