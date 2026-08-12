@@ -120,6 +120,18 @@ const createOrder = async (customerId, data) => {
           estimatedAt: new Date(Date.now() + 25 * 60 * 1000),
         },
         {
+          step: 'out_for_delivery',
+          label: 'Đang giao (legacy)',
+          emoji: '🛵',
+          estimatedAt: new Date(Date.now() + 30 * 60 * 1000),
+        },
+        {
+          step: 'delivering',
+          label: 'Đang giao',
+          emoji: '🛵',
+          estimatedAt: new Date(Date.now() + 30 * 60 * 1000),
+        },
+        {
           step: 'completed',
           label: 'Hoàn tất',
           emoji: '🎉',
@@ -174,6 +186,7 @@ const transitionStatus = async (orderId, newStatus, user, note) => {
     confirmed: 'confirmed',
     preparing: 'preparing',
     ready: 'ready',
+    delivering: 'delivering',
     completed: 'completed',
     cancelled: 'cancelled',
   };

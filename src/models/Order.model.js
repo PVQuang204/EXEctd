@@ -6,6 +6,7 @@ const ORDER_TRACKING_STEPS = [
   { key: 'confirmed', label: 'Nhà hàng xác nhận', emoji: '✅' },
   { key: 'preparing', label: 'Đang chuẩn bị', emoji: '👨‍🍳' },
   { key: 'ready', label: 'Sẵn sàng giao', emoji: '📦' },
+  { key: 'delivering', label: 'Đang giao', emoji: '🛵' },
   { key: 'completed', label: 'Hoàn tất', emoji: '🎉' },
   { key: 'cancelled', label: 'Đã hủy', emoji: '❌' },
 ];
@@ -141,6 +142,7 @@ orderSchema.methods._estimateForStep = function (stepKey) {
     confirmed: 2,
     preparing: 15,
     ready: 25,
+    delivering: 30,
     completed: 45,
     cancelled: 0,
   };
