@@ -8,7 +8,7 @@ const ApiError = require('../utils/ApiError');
 //   - Loại bỏ itemIds không tồn tại trong menu (AI có thể bịa ID)
 //   - Đảm bảo tổng giá group <= budget
 //   - Đảm bảo mỗi group có ít nhất 1 món
-const sanitizeAiGroups = (aiGroups, validIds, budget) => {
+const sanitizeAiGroups = (aiGroups, validIds, budget, menuPriceMap = new Map()) => {
   if (!Array.isArray(aiGroups)) return [];
   const validIdSet = new Set(validIds.map((id) => id.toString()));
   const seen = new Set();
@@ -26,15 +26,30 @@ const sanitizeAiGroups = (aiGroups, validIds, budget) => {
         }
       }
       if (uniqueIds.length === 0) return null;
+      // Recompute estimated Total từ price thật trong menu (không tin AI)
+      // Giả định: total = tổng giá món × people (mỗi người ăn 1 phần)
+      const peopleCount = Number(g.people) || 1;
+      let realTotal = 0;
+      for (const id of uniqueIds) {
+        const price = menuPriceMap.get(id);
+        if (typeof price === 'number' && price > 0) {
+          realTotal += price;
+        }
+      }
+      realTotal = realTotal * Math.max(1, peopleCount);
+      // Nếu không có price nào (lỗi map), fallback về giá trị AI nhưng clamp <= budget
+      if (realTotal === 0) {
+        realTotal = Math.min(Number(g.estimatedTotal) || 0, budget);
+      }
       return {
         label: typeof g.label === 'string' ? g.label : 'Gợi ý',
-        estimatedTotal: Number(g.estimatedTotal) || 0,
+        estimatedTotal: realTotal,
         itemIds: uniqueIds,
         reason: typeof g.reason === 'string' ? g.reason : '',
       };
     })
     .filter(Boolean)
-    .filter((g) => g.estimatedTotal <= budget);
+    .filter((g) => g.estimatedTotal > 0 && g.estimatedTotal <= budget);
 };
 
 const KNOWN_UPSELLS = [
@@ -47,15 +62,21 @@ const KNOWN_UPSELLS = [
 
 const suggestUpsell = (budget) => {
   const items = [];
+  // Budget cao: upsell cao cấp
+  if (budget >= 400000) items.push(KNOWN_UPSELLS[4]);
   if (budget >= 200000) {
     items.push(KNOWN_UPSELLS[0]);
     items.push(KNOWN_UPSELLS[2]);
   }
-  if (budget >= 100000) {
+  if (budget >= 60000) {
     items.push(KNOWN_UPSELLS[1]);
     items.push(KNOWN_UPSELLS[3]);
   }
-  if (budget >= 400000) items.push(KNOWN_UPSELLS[4]);
+  // Budget thấp: vẫn return 1-2 upsell nhỏ (nước uống, tráng miệng) để UX không trống
+  if (items.length === 0) {
+    items.push(KNOWN_UPSELLS[1]); // Nước uống 25k
+    items.push(KNOWN_UPSELLS[3]); // Chè 35k
+  }
   return items.slice(0, 4);
 };
 
@@ -129,6 +150,7 @@ const suggestByBudget = async ({ budget, people, tags, restaurantId, preferences
   }));
 
   const validIds = menuContext.map((m) => m.id.toString());
+  const menuPriceMap = new Map(menuContext.map((m) => [m.id.toString(), m.price]));
   const fallbackUpsell = suggestUpsell(budget);
 
   // Try Groq AI first
@@ -142,7 +164,9 @@ const suggestByBudget = async ({ budget, people, tags, restaurantId, preferences
   });
 
   if (aiResult && Array.isArray(aiResult.groups) && aiResult.groups.length) {
-    const sanitizedGroups = sanitizeAiGroups(aiResult.groups, validIds, budget);
+    // Pass people để recompute total
+    const sanitizedGroups = sanitizeAiGroups(aiResult.groups, validIds, budget, menuPriceMap)
+      .map((g) => ({ ...g, people }));
     const elapsed = Date.now() - start;
     if (sanitizedGroups.length > 0) {
       console.log(

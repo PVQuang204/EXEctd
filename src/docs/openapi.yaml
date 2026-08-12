@@ -495,7 +495,7 @@ components:
             properties:
               step:
                 type: string
-                enum: [placed, confirmed, preparing, ready, out_for_delivery, completed, cancelled]
+                enum: [placed, confirmed, preparing, ready, completed, cancelled]
               label:
                 type: string
               emoji:
