@@ -44,6 +44,7 @@ const foodSchema = new mongoose.Schema(
 );
 
 foodSchema.index({ restaurantId: 1, categoryId: 1 });
+foodSchema.index({ restaurantId: 1, isAvailable: 1, createdAt: -1 });
 
 foodSchema.methods.toMobileJSON = function () {
   return {
