@@ -193,22 +193,26 @@ const handlePayOSReturn = async (query) => {
     return { payment, success: true };
   }
 
-  if (cancel === 'true' || status === 'CANCELLED') {
+  // PayOS redirect có thể gửi success=true hoặc cancel=true
+  // Hoặc có thể gửi kèm orderCode để verify
+  const isCancelled = cancel === 'true' || status === 'CANCELLED';
+  
+  if (isCancelled) {
     payment.paymentStatus = PAYMENT_STATUSES.FAILED;
     await payment.save();
     return { payment, success: false };
   }
 
-  const success = code === '00' && status === 'PAID';
-
-  if (success) {
-    try {
-      const payosInfo = await getPayOSPaymentInfo(Number(orderCode));
-      if (payosInfo.status === 'PAID') {
-        payment.paymentStatus = PAYMENT_STATUSES.PAID;
-        payment.transactionId = payosInfo.id || String(payosInfo.paymentLinkId || '');
-        payment.payosResponse = payosInfo;
-        await payment.save();
+  // Gọi PayOS API để lấy trạng thái thực (bất kể query params)
+  try {
+    const payosInfo = await getPayOSPaymentInfo(Number(orderCode));
+    console.log('[PayOS Return] PayOS info:', payosInfo);
+    
+    if (payosInfo.status === 'PAID') {
+      payment.paymentStatus = PAYMENT_STATUSES.PAID;
+      payment.transactionId = payosInfo.id || String(payosInfo.paymentLinkId || '');
+      payment.payosResponse = payosInfo;
+      await payment.save();
 
         const order = await orderRepository.findById(payment.orderId);
         if (order && order.paymentStatus !== PAYMENT_STATUSES.PAID) {
