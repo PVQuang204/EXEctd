@@ -34,13 +34,17 @@ const register = async ({ fullName, email, password, phone, role }) => {
     throw new ApiError(400, 'Email already exists');
   }
   const allowedRole = ALLOWED_REGISTER_ROLES.includes(role) ? role : ROLES.CUSTOMER;
+
+  // Mặc định ACTIVE cho Customer, PENDING cho Restaurant Owner cần duyệt
+  const status = allowedRole === ROLES.RESTAURANT_OWNER ? USER_STATUSES.PENDING : USER_STATUSES.ACTIVE;
+
   const user = await userRepository.create({
     fullName,
     email,
     password,
     phone,
     role: allowedRole,
-    status: USER_STATUSES.ACTIVE,
+    status,
   });
   return issueTokens(user);
 };
@@ -52,6 +56,9 @@ const login = async ({ email, password }) => {
   }
   if (user.status === USER_STATUSES.LOCKED) {
     throw new ApiError(403, 'Account is locked');
+  }
+  if (user.status === USER_STATUSES.PENDING) {
+    throw new ApiError(403, 'Account is pending approval');
   }
   return issueTokens(user);
 };

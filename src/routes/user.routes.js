@@ -12,6 +12,7 @@ router.put('/profile', userController.updateProfile);
 router.post('/avatar', upload.single('avatar'), userController.uploadAvatar);
 
 router.get('/', roleMiddleware('admin'), userController.listUsers);
+router.patch('/:id/approve', roleMiddleware('admin'), userController.approveUser);
 router.patch('/:id/lock', roleMiddleware('admin'), userController.lockUser);
 router.patch('/:id/unlock', roleMiddleware('admin'), userController.unlockUser);
 

@@ -34,3 +34,8 @@ exports.unlockUser = asyncHandler(async (req, res) => {
   const user = await userService.unlockUser(req.params.id);
   res.json({ success: true, data: user });
 });
+
+exports.approveUser = asyncHandler(async (req, res) => {
+  const user = await userService.approveUser(req.params.id);
+  res.json({ success: true, data: user, message: 'User approved successfully' });
+});

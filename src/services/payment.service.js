@@ -16,65 +16,105 @@ const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => 
     throw new ApiError(400, 'Order already paid');
   }
 
-  let payment = await paymentRepository.findOne({ orderId });
-  if (payment) {
-    throw new ApiError(400, 'Payment already initiated for this order');
+  let payment = await paymentRepository.findOne({ orderId, paymentStatus: PAYMENT_STATUSES.UNPAID });
+  if (payment && payment.paymentMethod === paymentMethod) {
+    // Nếu đã có payment chưa thanh toán cùng phương thức, trả về luôn (tránh tạo nhiều link PayOS)
+    if (paymentMethod === PAYMENT_METHODS.PAYOS && payment.payosResponse?.checkoutUrl) {
+      return {
+        payment,
+        paymentUrl: payment.payosResponse.checkoutUrl,
+        depositAmount: order.depositAmount,
+        remainingAmount: order.remainingAmount,
+        totalAmount: order.totalAmount,
+        message: 'Tiếp tục thanh toán cọc',
+      };
+    }
   }
 
-  const depositAmt = getDepositAmount(order.totalAmount);
-  const remainingAmt = order.totalAmount - depositAmt;
+  const depositAmt = order.depositAmount;
+  const remainingAmt = order.remainingAmount;
 
-  // Update order with deposit info
-  await orderRepository.updateById(orderId, {
-    depositAmount: depositAmt,
-    remainingAmount: remainingAmt,
-    paymentPhase: 'deposit',
-  });
+  // Trường hợp đơn hàng cần đặt cọc (thường là đơn COD giá trị cao)
+  if (depositAmt > 0 && order.paymentPhase === 'deposit') {
+    if (paymentMethod === PAYMENT_METHODS.COD) {
+      // Nếu là COD nhưng yêu cầu cọc, thì không thể "thanh toán cọc bằng COD" (vì cọc là để giữ tin)
+      // trừ khi quy trình của bạn cho phép cọc sau. Nhưng ở đây ta ép thanh toán online cho phần cọc.
+      throw new ApiError(400, `Đơn hàng giá trị cao (${order.totalAmount.toLocaleString()}đ) yêu cầu đặt cọc ${depositAmt.toLocaleString()}đ qua PayOS trước khi thực hiện.`);
+    }
 
+    if (paymentMethod === PAYMENT_METHODS.PAYOS) {
+      const orderCode = Number(
+        `${Date.now()}`.slice(-10) + `${Math.floor(Math.random() * 1000)}`.padStart(3, '0')
+      );
+
+      const payosResult = await createPayOSPaymentLink({
+        orderCode,
+        amount: depositAmt,
+        description: `Coc don hang ${order.orderCode}`.substring(0, 25),
+        cancelUrl: `${process.env.CLIENT_URL}/payment-result?cancel=true&orderId=${orderId}`,
+        returnUrl: `${process.env.CLIENT_URL}/payment-result?success=true&orderId=${orderId}`,
+      });
+
+      payment = await paymentRepository.create({
+        orderId,
+        amount: depositAmt,
+        paymentMethod,
+        paymentStatus: PAYMENT_STATUSES.UNPAID,
+        paymentPhase: 'deposit',
+        payosOrderCode: orderCode,
+        payosResponse: payosResult,
+      });
+
+      return {
+        payment,
+        paymentUrl: payosResult.checkoutUrl,
+        depositAmount: depositAmt,
+        remainingAmount: remainingAmt,
+        totalAmount: order.totalAmount,
+        message: `Vui lòng thanh toán cọc ${Math.round((depositAmt / order.totalAmount) * 100)}% để xác nhận đơn hàng.`,
+      };
+    }
+  }
+
+  // Trường hợp thanh toán toàn bộ hoặc không cần cọc
   if (paymentMethod === PAYMENT_METHODS.COD) {
-    payment = await paymentRepository.create({
-      orderId,
-      amount: depositAmt,
-      paymentMethod,
-      paymentStatus: PAYMENT_STATUSES.UNPAID,
-      paymentPhase: 'deposit',
+    // Đơn hàng COD bình thường (không cần cọc hoặc đã cọc xong)
+    await orderRepository.updateById(orderId, {
+      paymentMethod: PAYMENT_METHODS.COD,
+      paymentStatus: PAYMENT_STATUSES.UNPAID
     });
-    await orderRepository.updateById(orderId, { paymentStatus: PAYMENT_STATUSES.UNPAID });
+
     return {
-      payment,
-      depositAmount: depositAmt,
-      remainingAmount: remainingAmt,
-      totalAmount: order.totalAmount,
-      message: `Thanh toán cọc ${Math.round((depositAmt / order.totalAmount) * 100)}% (${depositAmt.toLocaleString()}đ) khi nhận hàng. Còn lại: ${remainingAmt.toLocaleString()}đ`,
+      success: true,
+      message: 'Đơn hàng sẽ được thanh toán bằng tiền mặt khi nhận hàng (COD).',
+      totalAmount: order.totalAmount
     };
   }
 
+  // Trường hợp thanh toán toàn bộ hoặc thanh toán phần còn lại sau khi đã cọc
   if (paymentMethod === PAYMENT_METHODS.PAYOS) {
+    const amount = order.paymentPhase === 'full' ? order.totalAmount : order.remainingAmount;
+
+    if (amount <= 0) throw new ApiError(400, 'Không còn số tiền cần thanh toán');
+
     const orderCode = Number(
       `${Date.now()}`.slice(-10) + `${Math.floor(Math.random() * 1000)}`.padStart(3, '0')
     );
 
-    const items = order.items.map((item) => ({
-      name: item.name.substring(0, 50),
-      quantity: item.quantity,
-      price: Math.round(item.price),
-    }));
-
     const payosResult = await createPayOSPaymentLink({
       orderCode,
-      amount: depositAmt,
-      description: `Coc ${orderId}`.substring(0, 25),
-      items,
+      amount,
+      description: `Thanh toan don ${order.orderCode}`.substring(0, 25),
       cancelUrl: `${process.env.CLIENT_URL}/payment-result?cancel=true&orderId=${orderId}`,
-      returnUrl: `${process.env.CLIENT_URL}/payment-result?success=true&orderId=${orderId}&deposit=${depositAmt}&remaining=${remainingAmt}&total=${order.totalAmount}`,
+      returnUrl: `${process.env.CLIENT_URL}/payment-result?success=true&orderId=${orderId}`,
     });
 
     payment = await paymentRepository.create({
       orderId,
-      amount: depositAmt,
+      amount,
       paymentMethod,
       paymentStatus: PAYMENT_STATUSES.UNPAID,
-      paymentPhase: 'deposit',
+      paymentPhase: order.paymentPhase,
       payosOrderCode: orderCode,
       payosResponse: payosResult,
     });
@@ -82,11 +122,8 @@ const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => 
     return {
       payment,
       paymentUrl: payosResult.checkoutUrl,
-      depositAmount: depositAmt,
-      remainingAmount: remainingAmt,
-      totalAmount: order.totalAmount,
-      depositPercent: Math.round((depositAmt / order.totalAmount) * 100),
-      message: `Vui lòng thanh toán cọc ${Math.round((depositAmt / order.totalAmount) * 100)}% (${depositAmt.toLocaleString()}đ). Số tiền còn lại: ${remainingAmt.toLocaleString()}đ sẽ thanh toán khi nhận hàng.`,
+      amount,
+      message: order.paymentPhase === 'full' ? 'Thanh toán toàn bộ đơn hàng' : 'Thanh toán số tiền còn lại',
     };
   }
 

@@ -24,6 +24,7 @@ router.put(
   restaurantController.update
 );
 router.patch('/:id/location', roleMiddleware('restaurant_owner'), restaurantController.updateLocation);
+router.get('/admin/pending', roleMiddleware('admin'), restaurantController.listPending);
 router.patch('/:id/approve', roleMiddleware('admin'), restaurantController.approve);
 router.patch('/:id/reject', roleMiddleware('admin'), restaurantController.reject);
 router.get('/admin/all', roleMiddleware('admin'), restaurantController.adminList);

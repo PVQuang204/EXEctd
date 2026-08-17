@@ -3,7 +3,14 @@ const orderRepository = require('../repositories/order.repository');
 const foodRepository = require('../repositories/food.repository');
 const restaurantRepository = require('../repositories/restaurant.repository');
 const counterRepository = require('../repositories/counter.repository');
-const { ORDER_STATUSES, PAYMENT_STATUSES, STATUS_TRANSITIONS, SOCKET_EVENTS } = require('../constants');
+const {
+  ORDER_STATUSES,
+  PAYMENT_STATUSES,
+  STATUS_TRANSITIONS,
+  SOCKET_EVENTS,
+  getDepositAmount,
+  PAYMENT_PHASES,
+} = require('../constants');
 const { ORDER_TRACKING_STEPS } = require('../models/Order.model');
 const { createNotification } = require('./notification.service');
 const { applyPromotion } = require('./menu.service');
@@ -73,6 +80,12 @@ const createOrder = async (customerId, data) => {
     }
 
     const totalAmount = Math.max(0, subtotal - discountAmount);
+
+    // Tính toán tiền cọc và tiền còn lại
+    const depositAmount = getDepositAmount(totalAmount);
+    const remainingAmount = totalAmount - depositAmount;
+    const paymentPhase = depositAmount > 0 ? PAYMENT_PHASES.DEPOSIT : PAYMENT_PHASES.FULL;
+
     const orderCode = await generateOrderCode();
     const order = await orderRepository.create({
       orderCode,
@@ -81,6 +94,9 @@ const createOrder = async (customerId, data) => {
       items: built,
       totalAmount,
       discountAmount,
+      depositAmount,
+      remainingAmount,
+      paymentPhase,
       deliveryAddress: data.deliveryAddress,
       deliveryName: data.deliveryName,
       deliveryPhone: data.deliveryPhone,

@@ -41,6 +41,15 @@ const unlockUser = async (userId) => {
   return user;
 };
 
+const approveUser = async (userId) => {
+  const user = await userRepository.updateById(userId, { status: 'active' });
+  if (!user) throw new ApiError(404, 'User not found');
+
+  // Bạn có thể thêm logic gửi email thông báo duyệt thành công ở đây
+
+  return user;
+};
+
 module.exports = {
   getProfile,
   updateProfile,
@@ -48,4 +57,5 @@ module.exports = {
   listUsers,
   lockUser,
   unlockUser,
+  approveUser,
 };

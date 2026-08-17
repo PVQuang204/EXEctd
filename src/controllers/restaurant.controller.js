@@ -39,6 +39,11 @@ exports.myRestaurants = asyncHandler(async (req, res) => {
   res.json({ success: true, data });
 });
 
+exports.listPending = asyncHandler(async (req, res) => {
+  const data = await restaurantService.listPending();
+  res.json({ success: true, data });
+});
+
 exports.approve = asyncHandler(async (req, res) => {
   const data = await restaurantService.approveRestaurant(req.params.id);
   res.json({ success: true, data });

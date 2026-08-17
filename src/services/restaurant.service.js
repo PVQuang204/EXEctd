@@ -1,7 +1,8 @@
 const restaurantRepository = require('../repositories/restaurant.repository');
+const userRepository = require('../repositories/user.repository');
 const { uploadFromBuffer, extractUrl } = require('./upload.service');
 const { createNotification } = require('./notification.service');
-const { RESTAURANT_STATUSES } = require('../constants');
+const { RESTAURANT_STATUSES, USER_STATUSES } = require('../constants');
 const ApiError = require('../utils/ApiError');
 
 const buildImagePatch = async (uploadResult) => {
@@ -16,7 +17,13 @@ const buildImagePatch = async (uploadResult) => {
 };
 
 const createRestaurant = async (ownerId, data, files) => {
-  const payload = { ...data, ownerId, status: RESTAURANT_STATUSES.APPROVED };
+  const owner = await userRepository.findById(ownerId);
+  if (!owner) throw new ApiError(404, 'Owner not found');
+  if (owner.status !== USER_STATUSES.ACTIVE) {
+    throw new ApiError(403, 'Tài khoản owner chưa được duyệt. Vui lòng liên hệ admin.');
+  }
+
+  const payload = { ...data, ownerId, status: RESTAURANT_STATUSES.PENDING };
   if (files?.coverImage?.[0]) {
     const result = await uploadFromBuffer(files.coverImage[0].buffer, 'restaurants');
     const patch = await buildImagePatch(result);
@@ -93,6 +100,12 @@ const approveRestaurant = async (id) => {
 const rejectRestaurant = async (id) => {
   const r = await restaurantRepository.updateById(id, { status: RESTAURANT_STATUSES.REJECTED });
   if (!r) throw new ApiError(404, 'Restaurant not found');
+  await createNotification({
+    userId: r.ownerId,
+    title: 'Restaurant rejected',
+    content: `Your restaurant "${r.name}" has been rejected.`,
+    type: 'restaurant',
+  });
   return r;
 };
 
@@ -127,6 +140,17 @@ const getAllRestaurants = async ({ page = 1, limit = 20, status, search }) => {
   return { restaurants, pagination: { page: Number(page), limit: Number(limit), total, pages: Math.ceil(total / limit) } };
 };
 
+const listPending = async () => {
+  const restaurants = await restaurantRepository.find(
+    { status: RESTAURANT_STATUSES.PENDING },
+    {
+      sort: { createdAt: -1 },
+      populate: { path: 'ownerId', select: 'fullName email phone' },
+    }
+  );
+  return restaurants;
+};
+
 module.exports = {
   createRestaurant,
   updateRestaurant,
@@ -137,4 +161,5 @@ module.exports = {
   getOwnerRestaurants,
   getById,
   getAllRestaurants,
+  listPending,
 };
