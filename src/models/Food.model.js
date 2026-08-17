@@ -38,6 +38,7 @@ const foodSchema = new mongoose.Schema(
     ratingCount: { type: Number, default: 0, min: 0 },
     isAvailable: { type: Boolean, default: true },
     tags: { type: [String], default: [], index: true },
+    ingredients: { type: [String], default: [], description: 'Danh sách nguyên liệu của món ăn' },
   },
   { timestamps: true }
 );
@@ -58,6 +59,7 @@ foodSchema.methods.toMobileJSON = function () {
     ratingAverage: this.ratingAverage,
     ratingCount: this.ratingCount,
     tags: this.tags,
+    ingredients: this.ingredients || [],
     categoryId: this.categoryId,
     restaurantId: this.restaurantId,
   };

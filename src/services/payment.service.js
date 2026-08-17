@@ -3,7 +3,7 @@ const orderRepository = require('../repositories/order.repository');
 const { createPayOSPaymentLink, verifyPayOSWebhook, getPayOSPaymentInfo } = require('../config/payos');
 const { createNotification } = require('./notification.service');
 const { emitOrderEvent } = require('../sockets');
-const { PAYMENT_METHODS, PAYMENT_STATUSES, getDepositAmount } = require('../constants');
+const { PAYMENT_METHODS, PAYMENT_STATUSES, ORDER_STATUSES, getDepositAmount } = require('../constants');
 const ApiError = require('../utils/ApiError');
 
 const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => {
@@ -150,12 +150,18 @@ const handlePayOSWebhook = async (webhookBody) => {
     const order = await orderRepository.findById(payment.orderId);
     if (order) {
       order.paymentStatus = PAYMENT_STATUSES.PAID;
-      order.paymentPhase = 'deposit';
+      if (order.status === ORDER_STATUSES.PENDING) {
+        order.status = ORDER_STATUSES.CONFIRMED;
+      }
       await order.save();
+
+      const isDeposit = payment.paymentPhase === 'deposit';
       await createNotification({
         userId: order.customerId,
-        title: 'Đặt cọc thành công',
-        content: `Đơn hàng #${order._id} đã đặt cọc thành công. Vui lòng thanh toán ${order.remainingAmount.toLocaleString()}đ khi nhận hàng.`,
+        title: isDeposit ? 'Đặt cọc thành công' : 'Thanh toán thành công',
+        content: isDeposit
+          ? `Đơn hàng #${order._id} đã đặt cọc thành công. Vui lòng thanh toán ${order.remainingAmount.toLocaleString()}đ khi nhận hàng.`
+          : `Đơn hàng #${order._id} đã thanh toán toàn bộ qua PayOS.`,
         type: 'payment',
       });
       emitOrderEvent(order, 'payment_success');
@@ -201,12 +207,18 @@ const handlePayOSReturn = async (query) => {
         const order = await orderRepository.findById(payment.orderId);
         if (order && order.paymentStatus !== PAYMENT_STATUSES.PAID) {
           order.paymentStatus = PAYMENT_STATUSES.PAID;
-          order.paymentPhase = 'deposit';
+          if (order.status === ORDER_STATUSES.PENDING) {
+            order.status = ORDER_STATUSES.CONFIRMED;
+          }
           await order.save();
+
+          const isDeposit = payment.paymentPhase === 'deposit';
           await createNotification({
             userId: order.customerId,
-            title: 'Đặt cọc thành công',
-            content: `Đơn hàng #${order._id} đã đặt cọc thành công. Vui lòng thanh toán ${order.remainingAmount.toLocaleString()}đ khi nhận hàng.`,
+            title: isDeposit ? 'Đặt cọc thành công' : 'Thanh toán thành công',
+            content: isDeposit
+              ? `Đơn hàng #${order._id} đã đặt cọc thành công. Vui lòng thanh toán ${order.remainingAmount.toLocaleString()}đ khi nhận hàng.`
+              : `Đơn hàng #${order._id} đã thanh toán toàn bộ qua PayOS.`,
             type: 'payment',
           });
           emitOrderEvent(order, 'payment_success');
