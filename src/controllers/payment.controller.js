@@ -23,11 +23,22 @@ exports.payosWebhook = asyncHandler(async (req, res) => {
 exports.payosReturn = asyncHandler(async (req, res) => {
   const data = await paymentService.handlePayOSReturn(req.query);
   const payment = data.payment;
+  const isDeposit = payment?.paymentPhase === 'deposit';
+
   const params = new URLSearchParams({
     success: String(data.success),
     orderId: payment?.orderId || '',
     cancel: 'false',
   });
+
+  if (data.order) {
+    params.set('total', data.order.totalAmount);
+    if (isDeposit) {
+      params.set('deposit', data.order.depositAmount);
+      params.set('remaining', data.order.remainingAmount);
+    }
+  }
+
   res.redirect(`${process.env.CLIENT_URL}/payment-result?${params.toString()}`);
 });
 

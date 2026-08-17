@@ -168,7 +168,11 @@ const handlePayOSWebhook = async (webhookBody) => {
     }
   }
 
-  return { payment, success };
+  return {
+    payment,
+    success,
+    order: order ? { totalAmount: order.totalAmount, depositAmount: order.depositAmount, remainingAmount: order.remainingAmount } : null,
+  };
 };
 
 const handlePayOSReturn = async (query) => {
@@ -224,7 +228,11 @@ const handlePayOSReturn = async (query) => {
           emitOrderEvent(order, 'payment_success');
         }
 
-        return { payment, success: true };
+        return {
+          payment,
+          success: true,
+          order: order ? { totalAmount: order.totalAmount, depositAmount: order.depositAmount, remainingAmount: order.remainingAmount } : null,
+        };
       }
     } catch (err) {
       console.error('PayOS getPaymentInfo error:', err.message);
