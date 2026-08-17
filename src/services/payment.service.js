@@ -214,35 +214,34 @@ const handlePayOSReturn = async (query) => {
       payment.payosResponse = payosInfo;
       await payment.save();
 
-        const order = await orderRepository.findById(payment.orderId);
-        if (order && order.paymentStatus !== PAYMENT_STATUSES.PAID) {
-          order.paymentStatus = PAYMENT_STATUSES.PAID;
-          if (order.status === ORDER_STATUSES.PENDING) {
-            order.status = ORDER_STATUSES.CONFIRMED;
-          }
-          await order.save();
-
-          const isDeposit = payment.paymentPhase === 'deposit';
-          await createNotification({
-            userId: order.customerId,
-            title: isDeposit ? 'Đặt cọc thành công' : 'Thanh toán thành công',
-            content: isDeposit
-              ? `Đơn hàng #${order._id} đã đặt cọc thành công. Vui lòng thanh toán ${order.remainingAmount.toLocaleString()}đ khi nhận hàng.`
-              : `Đơn hàng #${order._id} đã thanh toán toàn bộ qua PayOS.`,
-            type: 'payment',
-          });
-          emitOrderEvent(order, 'payment_success');
+      const order = await orderRepository.findById(payment.orderId);
+      if (order && order.paymentStatus !== PAYMENT_STATUSES.PAID) {
+        order.paymentStatus = PAYMENT_STATUSES.PAID;
+        if (order.status === ORDER_STATUSES.PENDING) {
+          order.status = ORDER_STATUSES.CONFIRMED;
         }
+        await order.save();
 
-        return {
-          payment,
-          success: true,
-          order: order ? { totalAmount: order.totalAmount, depositAmount: order.depositAmount, remainingAmount: order.remainingAmount } : null,
-        };
+        const isDeposit = payment.paymentPhase === 'deposit';
+        await createNotification({
+          userId: order.customerId,
+          title: isDeposit ? 'Đặt cọc thành công' : 'Thanh toán thành công',
+          content: isDeposit
+            ? `Đơn hàng #${order._id} đã đặt cọc thành công. Vui lòng thanh toán ${order.remainingAmount.toLocaleString()}đ khi nhận hàng.`
+            : `Đơn hàng #${order._id} đã thanh toán toàn bộ qua PayOS.`,
+          type: 'payment',
+        });
+        emitOrderEvent(order, 'payment_success');
       }
-    } catch (err) {
-      console.error('PayOS getPaymentInfo error:', err.message);
+
+      return {
+        payment,
+        success: true,
+        order: order ? { totalAmount: order.totalAmount, depositAmount: order.depositAmount, remainingAmount: order.remainingAmount } : null,
+      };
     }
+  } catch (err) {
+    console.error('PayOS getPaymentInfo error:', err.message);
   }
 
   return { payment, success: false };
