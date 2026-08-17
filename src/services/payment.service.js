@@ -121,6 +121,7 @@ const createPayment = async (orderId, customerId, { paymentMethod }, ipAddr) => 
 };
 
 const handlePayOSWebhook = async (webhookBody) => {
+  console.log('[PayOS Webhook] Body:', JSON.stringify(webhookBody));
   let verifiedData;
   try {
     verifiedData = verifyPayOSWebhook(webhookBody);
@@ -176,6 +177,7 @@ const handlePayOSWebhook = async (webhookBody) => {
 };
 
 const handlePayOSReturn = async (query) => {
+  console.log('[PayOS Return] Query params:', query);
   const { orderCode, code, status, cancel } = query;
 
   if (!orderCode) {
