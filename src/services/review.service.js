@@ -4,10 +4,35 @@ const restaurantRepository = require('../repositories/restaurant.repository');
 const orderRepository = require('../repositories/order.repository');
 const { uploadFromBuffer, extractUrl } = require('./upload.service');
 const { createNotification } = require('./notification.service');
-const { syncFoodRatingsFromReview } = require('./foodRating.service');
+const { syncFoodRatingsFromReview, recalculateFoodRating } = require('./foodRating.service');
 const { emitToUser, emitToRestaurant } = require('../sockets');
 const { ORDER_STATUSES, NOTIFICATION_TYPES } = require('../constants');
 const ApiError = require('../utils/ApiError');
+
+const recalculateRestaurantStats = async (restaurantId) => {
+  const restaurantObjectId = new mongoose.Types.ObjectId(restaurantId);
+  const stats = await reviewRepository.aggregate([
+    { $match: { restaurantId: restaurantObjectId } },
+    {
+      $group: {
+        _id: '$restaurantId',
+        averageRating: { $avg: '$rating' },
+        totalReviews: { $sum: 1 },
+      },
+    },
+  ]);
+  if (stats[0]) {
+    await restaurantRepository.updateById(restaurantId, {
+      averageRating: Math.round(stats[0].averageRating * 10) / 10,
+      totalReviews: stats[0].totalReviews,
+    });
+  } else {
+    await restaurantRepository.updateById(restaurantId, {
+      averageRating: 0,
+      totalReviews: 0,
+    });
+  }
+};
 
 const resolveFoodIds = async ({ foodId, orderId }) => {
   if (foodId) return [foodId];
@@ -25,8 +50,10 @@ const createReview = async (customerId, data, files = []) => {
     if (!order || order.customerId.toString() !== customerId.toString()) {
       throw new ApiError(403, 'Invalid order');
     }
-    if (order.status !== ORDER_STATUSES.READY) {
-      throw new ApiError(400, 'Can only review ready orders');
+    if (order.status !== ORDER_STATUSES.READY &&
+        order.status !== ORDER_STATUSES.DELIVERING &&
+        order.status !== ORDER_STATUSES.COMPLETED) {
+      throw new ApiError(400, 'Can only review ready, delivering or completed orders');
     }
   }
 
@@ -58,23 +85,7 @@ const createReview = async (customerId, data, files = []) => {
     images,
   });
 
-  const restaurantObjectId = new mongoose.Types.ObjectId(restaurantId);
-  const stats = await reviewRepository.aggregate([
-    { $match: { restaurantId: restaurantObjectId } },
-    {
-      $group: {
-        _id: '$restaurantId',
-        averageRating: { $avg: '$rating' },
-        totalReviews: { $sum: 1 },
-      },
-    },
-  ]);
-  if (stats[0]) {
-    await restaurantRepository.updateById(restaurantId, {
-      averageRating: Math.round(stats[0].averageRating * 10) / 10,
-      totalReviews: stats[0].totalReviews,
-    });
-  }
+  await recalculateRestaurantStats(restaurantId);
 
   await syncFoodRatingsFromReview({ foodId, orderId, rating });
 
@@ -131,4 +142,68 @@ const listAllReviews = async ({ page = 1, limit = 20, restaurantId, rating, star
   return { reviews, pagination: { page: Number(page), limit: Number(limit), total, pages: Math.ceil(total / limit) } };
 };
 
-module.exports = { createReview, listReviews, listAllReviews };
+const updateReview = async (reviewId, customerId, data, files = []) => {
+  const review = await reviewRepository.findById(reviewId);
+  if (!review) throw new ApiError(404, 'Review not found');
+  if (review.customerId.toString() !== customerId.toString()) {
+    throw new ApiError(403, 'Forbidden');
+  }
+
+  const oldRating = review.rating;
+  const oldFoodIds = review.foodIds?.map((id) => id.toString()) || [];
+
+  const { rating, comment } = data;
+  const updateData = {};
+  if (rating !== undefined) updateData.rating = rating;
+  if (comment !== undefined) updateData.comment = comment;
+
+  if (files && files.length > 0) {
+    const newImages = [];
+    for (const file of files) {
+      const result = await uploadFromBuffer(file.buffer, 'reviews');
+      const url = extractUrl(result);
+      if (!url) throw new ApiError(500, 'Image upload failed');
+      newImages.push(url);
+    }
+    updateData.images = newImages;
+  }
+
+  const updated = await reviewRepository.updateById(reviewId, updateData);
+  if (!updated) throw new ApiError(404, 'Review not found');
+
+  if (rating !== undefined && rating !== oldRating) {
+    await recalculateRestaurantStats(updated.restaurantId);
+
+    for (const fid of oldFoodIds) {
+      await recalculateFoodRating(fid);
+    }
+  }
+
+  emitToRestaurant(updated.restaurantId.toString(), 'review_updated', updated);
+  emitToUser(customerId.toString(), 'review_updated', updated);
+
+  return updated;
+};
+const deleteReview = async (reviewId, customerId) => {
+  const review = await reviewRepository.findById(reviewId);
+  if (!review) throw new ApiError(404, 'Review not found');
+  if (review.customerId.toString() !== customerId.toString()) {
+    throw new ApiError(403, 'Forbidden');
+  }
+
+  const restaurantId = review.restaurantId;
+  const foodIds = review.foodIds?.map((id) => id.toString()) || [];
+
+  await reviewRepository.deleteById(reviewId);
+
+  await recalculateRestaurantStats(restaurantId);
+
+  for (const fid of foodIds) {
+    await recalculateFoodRating(fid);
+  }
+
+  emitToRestaurant(restaurantId.toString(), 'review_deleted', { reviewId, restaurantId });
+  emitToUser(customerId.toString(), 'review_deleted', { reviewId, restaurantId });
+};
+
+module.exports = { createReview, listReviews, listAllReviews, updateReview, deleteReview };

@@ -20,3 +20,14 @@ exports.adminList = asyncHandler(async (req, res) => {
   const data = await reviewService.listAllReviews(req.query);
   res.json({ success: true, data });
 });
+
+exports.update = asyncHandler(async (req, res) => {
+  const files = req.files || (req.file ? [req.file] : []);
+  const data = await reviewService.updateReview(req.params.id, req.user._id, req.body, files);
+  res.json({ success: true, data });
+});
+
+exports.delete = asyncHandler(async (req, res) => {
+  await reviewService.deleteReview(req.params.id, req.user._id);
+  res.json({ success: true, message: 'Review deleted' });
+});
