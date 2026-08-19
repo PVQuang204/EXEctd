@@ -58,3 +58,24 @@ exports.adminList = asyncHandler(async (req, res) => {
   const data = await restaurantService.getAllRestaurants(req.query);
   res.json({ success: true, data });
 });
+
+exports.uploadCertificate = asyncHandler(async (req, res) => {
+  const isAdmin = req.user.role === 'admin';
+  const data = await restaurantService.uploadCertificate(
+    req.params.id,
+    req.user._id,
+    req.file,
+    isAdmin
+  );
+  res.json({ success: true, data });
+});
+
+exports.deleteCertificate = asyncHandler(async (req, res) => {
+  const isAdmin = req.user.role === 'admin';
+  const data = await restaurantService.deleteCertificate(
+    req.params.id,
+    req.user._id,
+    isAdmin
+  );
+  res.json({ success: true, data });
+});

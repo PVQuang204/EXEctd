@@ -36,6 +36,8 @@ const restaurantSchema = new mongoose.Schema(
     totalReviews: { type: Number, default: 0 },
     phone: { type: String, trim: true },
     address: { type: String, trim: true },
+    foodSafetyCertificate: { type: String, default: null },
+    foodSafetyCertificateAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

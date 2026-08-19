@@ -1,6 +1,10 @@
 const restaurantRepository = require('../repositories/restaurant.repository');
 const userRepository = require('../repositories/user.repository');
-const { uploadFromBuffer, extractUrl } = require('./upload.service');
+const {
+  uploadFromBuffer,
+  extractUrl,
+  deleteRemoteFile,
+} = require('./upload.service');
 const { createNotification } = require('./notification.service');
 const { RESTAURANT_STATUSES, USER_STATUSES } = require('../constants');
 const ApiError = require('../utils/ApiError');
@@ -151,6 +155,51 @@ const listPending = async () => {
   return restaurants;
 };
 
+const uploadCertificate = async (id, ownerId, file, isAdmin) => {
+  if (!file) throw new ApiError(400, 'Certificate file is required');
+  const restaurant = await restaurantRepository.findById(id);
+  if (!restaurant) throw new ApiError(404, 'Restaurant not found');
+  if (!isAdmin && restaurant.ownerId.toString() !== ownerId.toString()) {
+    throw new ApiError(403, 'Not your restaurant');
+  }
+
+  const oldUrl = restaurant.foodSafetyCertificate;
+  const result = await uploadFromBuffer(file.buffer, 'certificates');
+  const url = extractUrl(result);
+  if (!url) throw new ApiError(500, 'Upload failed');
+
+  if (oldUrl && oldUrl !== url) {
+    deleteRemoteFile(oldUrl).catch(() => {});
+  }
+
+  const updated = await restaurantRepository.updateById(id, {
+    foodSafetyCertificate: url,
+    foodSafetyCertificateAt: new Date(),
+  });
+  if (!updated) throw new ApiError(500, 'Failed to update restaurant');
+  return updated;
+};
+
+const deleteCertificate = async (id, ownerId, isAdmin) => {
+  const restaurant = await restaurantRepository.findById(id);
+  if (!restaurant) throw new ApiError(404, 'Restaurant not found');
+  if (!isAdmin && restaurant.ownerId.toString() !== ownerId.toString()) {
+    throw new ApiError(403, 'Not your restaurant');
+  }
+  if (!restaurant.foodSafetyCertificate) {
+    throw new ApiError(400, 'Restaurant has no certificate to delete');
+  }
+
+  deleteRemoteFile(restaurant.foodSafetyCertificate).catch(() => {});
+
+  const updated = await restaurantRepository.updateById(id, {
+    foodSafetyCertificate: null,
+    foodSafetyCertificateAt: null,
+  });
+  if (!updated) throw new ApiError(500, 'Failed to update restaurant');
+  return updated;
+};
+
 module.exports = {
   createRestaurant,
   updateRestaurant,
@@ -162,4 +211,6 @@ module.exports = {
   getById,
   getAllRestaurants,
   listPending,
+  uploadCertificate,
+  deleteCertificate,
 };

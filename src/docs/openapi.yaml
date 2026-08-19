@@ -934,6 +934,64 @@ paths:
         '200':
           description: OK
 
+  /api/restaurants/{id}/certificate:
+    post:
+      tags: [Restaurants]
+      summary: Upload/Thay giấy chứng nhận ATTP (owner của nhà hàng hoặc admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [certificate]
+              properties:
+                certificate:
+                  type: string
+                  format: binary
+                  description: File ảnh JPEG/PNG/WEBP/JPG (max 5MB)
+      responses:
+        '200':
+          description: Trả về restaurant với foodSafetyCertificate + foodSafetyCertificateAt
+        '400':
+          description: Không có file hoặc không phải ảnh
+        '401':
+          description: Chưa đăng nhập
+        '403':
+          description: Không phải owner của restaurant
+        '404':
+          description: Restaurant không tồn tại
+        '413':
+          description: File > 5MB
+    delete:
+      tags: [Restaurants]
+      summary: Xóa giấy chứng nhận ATTP (owner của nhà hàng hoặc admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Trả về restaurant với foodSafetyCertificate = null
+        '401':
+          description: Chưa đăng nhập
+        '403':
+          description: Không phải owner của restaurant
+        '404':
+          description: Restaurant không tồn tại
+
   /api/restaurants/{id}/approve:
     patch:
       tags: [Restaurants]

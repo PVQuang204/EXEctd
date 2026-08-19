@@ -118,10 +118,48 @@ const extractUrl = (uploadResult) => {
   return null;
 };
 
+const deleteFromCloudinary = async (publicId) => {
+  if (!publicId) return;
+  try {
+    await cloudinary.uploader.destroy(publicId, { resource_type: 'image', invalidate: true });
+  } catch (err) {
+    console.error('[upload.service] Cloudinary delete failed:', err.message);
+  }
+};
+
+const deleteFromLocal = async (url) => {
+  if (!url) return;
+  try {
+    const prefix = '/uploads/';
+    const idx = url.indexOf(prefix);
+    if (idx === -1) return;
+    const relative = url.substring(idx + prefix.length);
+    const filePath = path.join(UPLOAD_ROOT, relative);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+  } catch (err) {
+    console.error('[upload.service] Local delete failed:', err.message);
+  }
+};
+
+const deleteRemoteFile = async (url) => {
+  if (!url || typeof url !== 'string') return;
+  if (isCloudinaryConfigured() && url.includes('res.cloudinary.com')) {
+    const marker = '/image/upload/';
+    const i = url.indexOf(marker);
+    if (i === -1) return;
+    const tail = url.substring(i + marker.length).split('?')[0];
+    const publicId = tail.replace(/\.[^.]+$/, '');
+    await deleteFromCloudinary(publicId);
+    return;
+  }
+  await deleteFromLocal(url);
+};
+
 module.exports = {
   uploadFromBuffer,
   uploadFoodImage,
   extractUrl,
+  deleteRemoteFile,
   UPLOAD_ROOT,
   buildCloudinaryVariants,
 };

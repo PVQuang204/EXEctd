@@ -24,6 +24,17 @@ router.put(
   restaurantController.update
 );
 router.patch('/:id/location', roleMiddleware('restaurant_owner'), restaurantController.updateLocation);
+router.post(
+  '/:id/certificate',
+  roleMiddleware('restaurant_owner', 'admin'),
+  upload.single('certificate'),
+  restaurantController.uploadCertificate
+);
+router.delete(
+  '/:id/certificate',
+  roleMiddleware('restaurant_owner', 'admin'),
+  restaurantController.deleteCertificate
+);
 router.get('/admin/pending', roleMiddleware('admin'), restaurantController.listPending);
 router.patch('/:id/approve', roleMiddleware('admin'), restaurantController.approve);
 router.patch('/:id/reject', roleMiddleware('admin'), restaurantController.reject);

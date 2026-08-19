@@ -4,6 +4,24 @@ const errorHandler = (err, req, res, next) => {
   let statusCode = err.statusCode || 500;
   let message = err.message || 'Internal Server Error';
 
+  if (err instanceof ApiError) {
+    statusCode = err.statusCode;
+    message = err.message;
+  }
+
+  if (err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      statusCode = 413;
+      message = 'File too large';
+    } else {
+      statusCode = 400;
+      message = err.message;
+    }
+  } else if (err && /only .* images allowed/i.test(err.message)) {
+    statusCode = 400;
+    message = err.message;
+  }
+
   if (err.name === 'CastError') {
     statusCode = 400;
     message = 'Invalid ID format';
